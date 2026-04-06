@@ -1,0 +1,12 @@
+ACCOUNTING PAGES TO DO
+
+Dashboard
+Payroll
+Payroll Masterlist
+Daily Time Record
+Contribution Tables [dropdown collapsible]
+    -sss bracket
+    -philhealth
+    -pag-ibig
+Calendar
+activity logs

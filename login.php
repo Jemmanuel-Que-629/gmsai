@@ -248,7 +248,7 @@
                         <p class="text-muted">Please enter your credentials</p>
                     </div>
 
-                    <form action="process_login.php" method="POST">
+                    <form action="login_process.php" method="POST">
                         <div class="input-group-custom">
                             <input type="email" name="email" id="email" placeholder=" " required autocomplete="email">
                             <label for="email">Email address</label>
