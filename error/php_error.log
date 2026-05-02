@@ -1,0 +1,17 @@
+[03-May-2026 00:11:09 Asia/Manila] PHP Warning:  Undefined array key "first_name" in C:\xampp\htdocs\practice\global\header.php on line 12
+[03-May-2026 00:11:09 Asia/Manila] PHP Warning:  Undefined array key "name_extension" in C:\xampp\htdocs\practice\global\header.php on line 12
+[03-May-2026 00:11:09 Asia/Manila] PHP Warning:  Array to string conversion in C:\xampp\htdocs\practice\global\header.php on line 12
+[03-May-2026 00:11:09 Asia/Manila] PHP Warning:  Undefined variable $userEmail in C:\xampp\htdocs\practice\global\header.php on line 167
+[03-May-2026 00:11:09 Asia/Manila] PHP Fatal error:  Uncaught TypeError: htmlspecialchars(): Argument #1 ($string) must be of type string, null given in C:\xampp\htdocs\practice\global\header.php:167
+Stack trace:
+#0 C:\xampp\htdocs\practice\global\header.php(167): htmlspecialchars(NULL, 3, 'UTF-8')
+#1 C:\xampp\htdocs\practice\system_users\hr\dashboard.php(2): include('C:\\xampp\\htdocs...')
+#2 {main}
+  thrown in C:\xampp\htdocs\practice\global\header.php on line 167
+[03-May-2026 01:25:12 Asia/Manila] PHP Warning:  Undefined variable $conn in C:\xampp\htdocs\practice\system_users\profile.php on line 6
+[03-May-2026 01:25:12 Asia/Manila] PHP Fatal error:  Uncaught Error: Call to a member function prepare() on null in C:\xampp\htdocs\practice\system_users\profile.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\practice\system_users\profile.php on line 6
+[03-May-2026 02:12:24 Asia/Manila] PHP Warning:  Undefined variable $usernameValue in C:\xampp\htdocs\practice\system_users\profile.php on line 165
+[03-May-2026 02:12:24 Asia/Manila] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\practice\system_users\profile.php on line 165

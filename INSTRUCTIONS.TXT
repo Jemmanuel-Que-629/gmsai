@@ -1,0 +1,25 @@
+- Always validate and sanitize all inputs
+- Escape output using htmlspecialchars()
+- Use PDO prepared statements only (no raw SQL with variables)
+
+- Implement CSRF protection for all POST requests
+
+- Hash passwords using password_hash() and verify using password_verify()
+
+- Enforce authentication using sessions for protected pages
+
+- Implement rate limiting (max 5 requests per minute per IP)
+
+- File uploads:
+  - Max size: 10MB
+  - Restrict allowed file types
+  - Rename files uniquely before saving
+
+- Log all PHP errors to /error/php_error.log
+- Disable display_errors in production
+
+- Do not use console logs
+- Use consistent success/error handling (redirect or message)
+- Use sweet alert and bootstrap tabulator table (keep the version used same for all of my files)
+
+- Keep code modular (separate DB connection and logic)

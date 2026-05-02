@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+$flashToast = null;
+if (isset($_SESSION['flash_toast']) && is_array($_SESSION['flash_toast'])) {
+    $flashToast = $_SESSION['flash_toast'];
+    unset($_SESSION['flash_toast']);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +15,7 @@
     <title>GMSAI Login | Security & Commitment</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -248,7 +258,7 @@
                         <p class="text-muted">Please enter your credentials</p>
                     </div>
 
-                    <form action="login_process.php" method="POST">
+                    <form action="backend/users/unified_users_process.php" method="POST" id="loginForm" novalidate>
                         <div class="input-group-custom">
                             <input type="email" name="email" id="email" placeholder=" " required autocomplete="email">
                             <label for="email">Email address</label>
@@ -280,14 +290,53 @@
     </div>
 
     <script>
+        const flashToast = <?php echo json_encode($flashToast, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
         const togglePassword = document.querySelector('#togglePassword');
         const passwordField = document.querySelector('#password');
+        const loginForm = document.querySelector('#loginForm');
+        const emailField = document.querySelector('#email');
 
         togglePassword.addEventListener('click', function () {
             const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', type);
             this.textContent = type === 'password' ? 'visibility' : 'visibility_off';
         });
+
+        loginForm.addEventListener('submit', function (event) {
+            const email = emailField.value.trim();
+            const password = passwordField.value.trim();
+
+            if (!email || !password) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Information',
+                    text: 'All fields are required before logging in.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+
+        // Show server-side login errors here (e.g., wrong credentials)
+        if (flashToast && (flashToast.icon || flashToast.title || flashToast.text)) {
+            const icon = flashToast.icon || 'info';
+
+            // Success toasts are shown on the dashboard pages.
+            if (icon !== 'success') {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon,
+                    title: flashToast.title || '',
+                    text: flashToast.text || '',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                });
+            }
+        }
+
     </script>
 </body>
 </html>

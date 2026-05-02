@@ -1,5 +1,5 @@
-<?php 
-include '../../global/header.php'; 
+<?php
+include '../../global/header.php';
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -37,14 +37,6 @@ include '../../global/header.php';
     <?php include '../../global/sidebar.php'; ?>
 
     <div id="page-content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 px-4 mb-4 shadow-sm">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center">
-                    <span class="material-symbols-outlined me-2 text-success">dashboard</span>
-                    <h4 class="mb-0 fw-bold">HR Dashboard</h4>
-                </div>
-            </div>
-        </nav>
 
         <div class="container-fluid px-4">
             <div class="row mb-4">
