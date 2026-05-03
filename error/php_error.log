@@ -15,3 +15,66 @@ Stack trace:
   thrown in C:\xampp\htdocs\practice\system_users\profile.php on line 6
 [03-May-2026 02:12:24 Asia/Manila] PHP Warning:  Undefined variable $usernameValue in C:\xampp\htdocs\practice\system_users\profile.php on line 165
 [03-May-2026 02:12:24 Asia/Manila] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\practice\system_users\profile.php on line 165
+[03-May-2026 12:57:13 Asia/Manila] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY093]: Invalid parameter number in C:\xampp\htdocs\practice\system_users\my_activity_logs.php:33
+Stack trace:
+#0 C:\xampp\htdocs\practice\system_users\my_activity_logs.php(33): PDOStatement->execute(Array)
+#1 {main}
+  thrown in C:\xampp\htdocs\practice\system_users\my_activity_logs.php on line 33
+[03-May-2026 13:06:37 Asia/Manila] PHP Warning:  Undefined variable $logsUrl in C:\xampp\htdocs\practice\global\sidebar.php on line 127
+[03-May-2026 13:06:37 Asia/Manila] PHP Fatal error:  Uncaught TypeError: htmlspecialchars(): Argument #1 ($string) must be of type string, null given in C:\xampp\htdocs\practice\global\sidebar.php:127
+Stack trace:
+#0 C:\xampp\htdocs\practice\global\sidebar.php(127): htmlspecialchars(NULL, 3, 'UTF-8')
+#1 C:\xampp\htdocs\practice\system_users\my_activity_logs.php(75): include('C:\\xampp\\htdocs...')
+#2 {main}
+  thrown in C:\xampp\htdocs\practice\global\sidebar.php on line 127
+[03-May-2026 13:11:59 Asia/Manila] PHP Warning:  Undefined variable $roleId in C:\xampp\htdocs\practice\system_users\my_activity_logs.php on line 83
+[03-May-2026 13:12:14 Asia/Manila] PHP Warning:  Undefined variable $roleId in C:\xampp\htdocs\practice\system_users\my_activity_logs.php on line 83
+[03-May-2026 15:35:58 Asia/Manila] DB connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[03-May-2026 15:36:44 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:37:24 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:37:34 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:46:09 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:46:17 Asia/Manila] DB connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[03-May-2026 15:46:35 Asia/Manila] DB connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[03-May-2026 15:47:19 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:22 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:24 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:24 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:27 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:29 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:37 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:38 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:42 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:44 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:47:47 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:48:04 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:49:20 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:49:21 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:49:24 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:49:41 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:52:32 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:53:05 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:53:14 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:53:22 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:53:52 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:54:46 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:55:04 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:57:18 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 15:57:31 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:10:59 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:11:00 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:11:01 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:11:34 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:23:17 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:23:18 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 16:23:19 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 17:30:40 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:25:41 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:27:02 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:39:19 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:41:41 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:46:18 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:47:47 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:48:22 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:48:31 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
+[03-May-2026 18:51:11 Asia/Manila] PHP Warning:  Undefined variable $isAccountingLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 50

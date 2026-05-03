@@ -73,7 +73,7 @@ CREATE TABLE employees (
   position VARCHAR(100) NOT NULL,
   department VARCHAR(100) NOT NULL,
   location_id INT NOT NULL,
-  salary_type ENUM('daily','monthly') DEFAULT 'daily',
+  salary_type ENUM('daily', 'weekly', 'bi-weekly', 'semi-monthly', 'monthly') DEFAULT 'semi-monthly',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -176,24 +176,77 @@ CREATE TABLE sss_bracket (
   sss_id INT AUTO_INCREMENT PRIMARY KEY,
   lower_limit DECIMAL(10,2),
   upper_limit DECIMAL(10,2),
+  msc	decimal(10,2),
+  regular_msc	decimal(10,2),
+  mpf_msc	decimal(10,2),
   employee_contribution DECIMAL(10,2),
-  employer_contribution DECIMAL(10,2)
+  employer_contribution DECIMAL(10,2),
+
+  effective_from DATE NOT NULL,
+  effective_to DATE NULL
 );
 
-PhilHealth
-CREATE TABLE philhealth_bracket (
-  philhealth_id INT AUTO_INCREMENT PRIMARY KEY,
-  lower_limit DECIMAL(10,2),
-  upper_limit DECIMAL(10,2),
-  employee_contribution DECIMAL(10,2),
-  employer_contribution DECIMAL(10,2)
+CREATE TABLE philhealth_contribution(
+    philhealth_id INT PRIMARY KEY AUTO_INCREMENT,
+
+    -- Calculation Basis
+    monthly_rate DECIMAL(5,4) NOT NULL,        -- 0.0550 (representing 5.5%)
+    employee_share DECIMAL(5,4) NOT NULL,  -- 0.5000 (50% of the total)
+    employer_share DECIMAL(5,4) NOT NULL,  -- 0.5000 (50% of the total)
+
+    -- The Tricky Parts
+    salary_floor DECIMAL(10,2) NOT NULL,       -- 10000.00
+    salary_ceiling DECIMAL(10,2) NOT NULL,     -- 50000.00
+
+    -- Audit & Versioning
+    effective_from DATE NOT NULL,              -- 2026-01-01
+    effective_to DATE NULL,                    -- NULL if currently active
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-Pag-IBIG
-CREATE TABLE pagibig_bracket (
-  pagibig_id INT AUTO_INCREMENT PRIMARY KEY,
-  lower_limit DECIMAL(10,2),
-  upper_limit DECIMAL(10,2),
-  employee_contribution DECIMAL(10,2),
-  employer_contribution DECIMAL(10,2)
+INSERT INTO philhealth_contribution (
+    monthly_rate, 
+    employee_share, 
+    employer_share, 
+    salary_floor, 
+    salary_ceiling, 
+    effective_from, 
+    effective_to
+) VALUES (
+    0.0550,      -- 5.5% Total Rate
+    0.5000,      -- 50% Employee Share (half of total)
+    0.5000,      -- 50% Employer Share (half of total)
+    10000.00,    -- ₱10,000 Minimum Floor
+    50000.00,    -- ₱50,000 Maximum Ceiling
+    '2026-01-01',-- Start of the year
+    NULL         -- Leave NULL so it's marked as the active rate
 );
+
+
+CREATE TABLE pagibig_contribution (
+    pagibig_id INT PRIMARY KEY AUTO_INCREMENT,
+    
+    -- Bracket Boundaries
+    salary_min DECIMAL(10,2) NOT NULL,        -- e.g., 1000.00
+    salary_max DECIMAL(10,2) NOT NULL,        -- e.g., 1500.00 (Use a high number like 999999 for "Above")
+    
+    -- Rates
+    employee_rate DECIMAL(5,4) NOT NULL,      -- 0.0100 for 1%, 0.0200 for 2%
+    employer_rate DECIMAL(5,4) NOT NULL,      -- 0.0200 for 2%
+    
+    -- The Cap (Crucial for Pag-IBIG)
+    salary_ceiling DECIMAL(10,2) NOT NULL,    -- Currently 10,000.00 in the PH
+    
+    -- Versioning
+    effective_from DATE NOT NULL,
+    effective_to DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bracket 1: ₱1,000 to ₱1,500
+INSERT INTO pagibig_contribution (salary_min, salary_max, employee_rate, employer_rate, salary_ceiling, effective_from)
+VALUES (1000.00, 1500.00, 0.0100, 0.0200, 10000.00, '2026-01-01');
+
+-- Bracket 2: ₱1,500.01 and above
+INSERT INTO pagibig_contribution (salary_min, salary_max, employee_rate, employer_rate, salary_ceiling, effective_from)
+VALUES (1500.01, 9999999.99, 0.0200, 0.0200, 10000.00, '2026-01-01');

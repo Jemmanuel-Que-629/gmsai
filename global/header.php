@@ -97,6 +97,8 @@ $docTitle = 'Payroll System' . ($pageName !== '' ? ' - ' . $pageName : '');
 $docTitleJs = json_encode($docTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 ?>
 
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
 <style>
 	.gms-topbar {
 		background: #ffffff;
@@ -213,16 +215,34 @@ $docTitleJs = json_encode($docTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS
 					<div class="role"><?php echo htmlspecialchars((string)$userRole, ENT_QUOTES, 'UTF-8'); ?></div>
 				</span>
 			</button>
-			<ul class="dropdown-menu dropdown-menu-end">
-				<li><a class="dropdown-item" href="<?php echo htmlspecialchars(BASE_URL . 'system_users/profile.php', ENT_QUOTES, 'UTF-8'); ?>">Profile</a></li>
-				<li><a class="dropdown-item" href="<?php echo htmlspecialchars(BASE_URL . 'system_users/settings.php', ENT_QUOTES, 'UTF-8'); ?>">Settings</a></li>
+			<ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+				<li>
+					<a class="dropdown-item d-flex align-items-center" href="<?php echo htmlspecialchars(BASE_URL . 'system_users/profile.php', ENT_QUOTES, 'UTF-8'); ?>">
+						<span class="material-symbols-outlined me-2" style="font-size: 20px;">account_circle</span> Profile
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item d-flex align-items-center" href="<?php echo htmlspecialchars(BASE_URL . 'system_users/settings.php', ENT_QUOTES, 'UTF-8'); ?>">
+						<span class="material-symbols-outlined me-2" style="font-size: 20px;">settings</span> Settings
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item d-flex align-items-center" href="<?php echo htmlspecialchars(BASE_URL . 'system_users/my_activity_logs.php', ENT_QUOTES, 'UTF-8'); ?>">
+						<span class="material-symbols-outlined me-2" style="font-size: 20px;">history</span> My Activity Logs
+					</a>
+				</li>
 				<li><hr class="dropdown-divider"></li>
-				<li><a class="dropdown-item" href="<?php echo htmlspecialchars(BASE_URL . 'backend/users/unified_users_process.php?action=logout', ENT_QUOTES, 'UTF-8'); ?>">Logout</a></li>
+				<li>
+					<a class="dropdown-item d-flex align-items-center text-danger" href="<?php echo htmlspecialchars(BASE_URL . 'backend/users/unified_users_process.php?action=logout', ENT_QUOTES, 'UTF-8'); ?>">
+						<span class="material-symbols-outlined me-2" style="font-size: 20px; color: #dc3545;">logout</span> Logout
+					</a>
+				</li>
 			</ul>
 		</div>
 	</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 	(function () {

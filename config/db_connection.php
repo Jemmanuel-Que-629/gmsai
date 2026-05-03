@@ -1,25 +1,23 @@
 <?php
 
-date_default_timezone_set('Asia/Manila');
+declare(strict_types=1);
 
-$local_addresses = ['127.0.0.1', '::1'];
+require_once __DIR__ . '/config.php';
 
-$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
+$appEnv = strtoupper((string)env('APP_ENV', 'local'));
+$isProd = in_array($appEnv, ['PROD', 'PRODUCTION'], true);
 
-if (in_array($remoteAddr, $local_addresses, true)) {
-    $servername = "localhost";
-    $username   = "root";
-    $password   = "";
-    $dbname     = "gmsai";
-} else {
-    $servername = "prod_name";
-    $username   = "prod_user";
-    $password   = "prod_pass";
-    $dbname     = "prod_db";
-}
+$prefix = $isProd ? 'PROD_DB_' : 'DB_';
+
+$driver = (string)env($prefix . 'CONNECTION', env('DB_CONNECTION', 'mysql'));
+$host = (string)env($prefix . 'HOST', '127.0.0.1');
+$port = (string)env($prefix . 'PORT', '3306');
+$dbName = (string)env($prefix . 'DATABASE', 'gmsai');
+$username = (string)env($prefix . 'USERNAME', 'root');
+$password = (string)env($prefix . 'PASSWORD', '');
 
 // Create PDO connection
-$dsn = "mysql:host={$servername};dbname={$dbname};charset=utf8mb4";
+$dsn = sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s', $driver, $host, $port, $dbName, 'utf8mb4');
 
 try {
     $conn = new PDO($dsn, $username, $password, [
@@ -28,5 +26,10 @@ try {
         PDO::ATTR_EMULATE_PREPARES => false,
     ]);
 } catch (PDOException $e) {
-    die('Connection failed');
+	// Avoid leaking credentials in production
+	error_log('DB connection failed: ' . $e->getMessage());
+	if (env_bool('APP_DEBUG', false)) {
+		die('Connection failed: ' . $e->getMessage());
+	}
+	die('Connection failed');
 }

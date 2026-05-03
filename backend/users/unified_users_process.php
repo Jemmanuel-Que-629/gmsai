@@ -265,7 +265,7 @@ function handleUpdateProfile(PDO $conn): never
 		$ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 		$allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 		if (!in_array($ext, $allowed, true)) {
-			setFlashToast('error', 'Error', 'Unsupported image type.');
+			setFlashToast('error', 'Error', 'Unsupported image type. Allowed: jpg, jpeg, png, gif, webp.');
 			redirectTo(BASE_URL . 'system_users/profile.php');
 		}
 

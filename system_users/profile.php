@@ -315,3 +315,4 @@ $fullName = trim(((string)($user['first_name'] ?? '')) . ' ' . ((string)($user['
         });
     })();
 </script>
+

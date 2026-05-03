@@ -11,15 +11,26 @@ $userRole = $_SESSION['user_role'] ?? '';
 
 $hrDashboardUrl = BASE_URL . 'system_users/hr/dashboard.php';
 $accountingDashboardUrl = BASE_URL . 'system_users/accounting/dashboard.php';
+$hrLogsUrl = BASE_URL . 'system_users/hr/activity_logs.php';
+$accountingLogsUrl = BASE_URL . 'system_users/accounting/activity_logs.php';
 
 $dashboardUrl = $userRole === 'ACCOUNTING' ? $accountingDashboardUrl : $hrDashboardUrl;
+$logsUrl = $userRole === 'ACCOUNTING' ? $accountingLogsUrl : $hrLogsUrl;
 
 // Optional pages (only link if they exist)
 $payrollTablePath = DOMAIN_PATH . '/system_users/accounting/payroll_table.php';
 $sssContributionPath = DOMAIN_PATH . '/system_users/accounting/sss_contribution.php';
+$sssBracketPath = DOMAIN_PATH . '/system_users/accounting/sss_bracket_table.php';
+$philhealthContributionPath = DOMAIN_PATH . '/system_users/accounting/philhealth_contribution.php';
+$pagibigContributionPath = DOMAIN_PATH . '/system_users/accounting/pagibig_contribution.php';
+$dailyTimeRecordPath = DOMAIN_PATH . '/system_users/accounting/daily_time_record.php';
 
 $payrollTableUrl = file_exists($payrollTablePath) ? (BASE_URL . 'system_users/accounting/payroll_table.php') : '';
 $sssContributionUrl = file_exists($sssContributionPath) ? (BASE_URL . 'system_users/accounting/sss_contribution.php') : '';
+$sssBracketUrl = file_exists($sssBracketPath) ? (BASE_URL . 'system_users/accounting/sss_bracket_table.php') : '';
+$philhealthContributionUrl = file_exists($philhealthContributionPath) ? (BASE_URL . 'system_users/accounting/philhealth_contribution.php') : '';
+$pagibigContributionUrl = file_exists($pagibigContributionPath) ? (BASE_URL . 'system_users/accounting/pagibig_contribution.php') : '';
+$dailyTimeRecordUrl = file_exists($dailyTimeRecordPath) ? (BASE_URL . 'system_users/accounting/daily_time_record.php') : '';
 
 $logoUrl = defined('LOGO_URL') ? LOGO_URL : (BASE_URL . 'images/logo.jpg');
 
@@ -28,11 +39,22 @@ $currentPath = str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '');
 $isHrDashboardActive = str_ends_with($currentPath, '/system_users/hr/dashboard.php');
 $isAccountingDashboardActive = str_ends_with($currentPath, '/system_users/accounting/dashboard.php');
 
+$isHrLogsActive = str_ends_with($currentPath, '/system_users/hr/activity_logs.php');
+$isAccountingLogsActive = str_ends_with($currentPath, '/system_users/accounting/activity_logs.php');
+
 $isPayrollTableActive = str_ends_with($currentPath, '/system_users/accounting/payroll_table.php');
 $isSssContributionActive = str_ends_with($currentPath, '/system_users/accounting/sss_contribution.php');
 $isPayrollSectionActive = $isPayrollTableActive || $isSssContributionActive;
 
+$isSssBracketActive = str_ends_with($currentPath, '/system_users/accounting/sss_bracket_table.php');
+$isPhilhealthContributionActive = str_ends_with($currentPath, '/system_users/accounting/philhealth_contribution.php');
+$isPagibigContributionActive = str_ends_with($currentPath, '/system_users/accounting/pagibig_contribution.php');
+$isContributionSectionActive = $isSssBracketActive || $isPhilhealthContributionActive || $isPagibigContributionActive;
+
+$isDailyTimeRecordActive = str_ends_with($currentPath, '/system_users/accounting/daily_time_record.php');
+
 $isDashboardActive = ($userRole === 'HR' && $isHrDashboardActive) || ($userRole === 'ACCOUNTING' && $isAccountingDashboardActive);
+$isLogsActive = ($userRole === 'HR' && $isHrLogsActive) || ($userRole === 'ACCOUNTING' && $isAccountingLogsActive);
 ?>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -124,6 +146,15 @@ $isDashboardActive = ($userRole === 'HR' && $isHrDashboardActive) || ($userRole 
 				<span>Dashboard</span>
 			</span>
 		</a>
+		<?php if ($userRole !== 'ACCOUNTING'): ?>
+			<a href="<?php echo htmlspecialchars($logsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isLogsActive ? 'is-active' : ''; ?>">
+				<span class="nav-left">
+					<span class="material-symbols-outlined nav-icon">description</span>
+					<span>Activity Logs</span>
+				</span>
+			</a>
+		<?php endif; ?>
+
 
 		<?php if ($userRole === 'ACCOUNTING'): ?>
 			<button type="button" class="<?php echo $isPayrollSectionActive ? 'is-active' : ''; ?>" data-bs-toggle="collapse" data-bs-target="#payrollMenu" aria-expanded="<?php echo $isPayrollSectionActive ? 'true' : 'false'; ?>" aria-controls="payrollMenu">
@@ -156,19 +187,102 @@ $isDashboardActive = ($userRole === 'HR' && $isHrDashboardActive) || ($userRole 
 						<a href="<?php echo htmlspecialchars($sssContributionUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isSssContributionActive ? 'is-active' : ''; ?>">
 							<span class="nav-left">
 								<span class="material-symbols-outlined nav-icon">account_balance</span>
-								<span>SSS Contribution</span>
+								<span>Payroll Masterlist</span>
 							</span>
 						</a>
 					<?php else: ?>
 						<a href="#" onclick="return false;" aria-disabled="true" style="opacity:.75;">
 							<span class="nav-left">
 								<span class="material-symbols-outlined nav-icon">account_balance</span>
-								<span>SSS Contribution</span>
+								<span>Payroll Masterlist</span>
 							</span>
 						</a>
 					<?php endif; ?>
 				</div>
 			</div>
+
+			<button type="button" class="<?php echo $isContributionSectionActive ? 'is-active' : ''; ?>" data-bs-toggle="collapse" data-bs-target="#contributionMenu" aria-expanded="<?php echo $isContributionSectionActive ? 'true' : 'false'; ?>" aria-controls="contributionMenu">
+				<span class="nav-left">
+					<span class="material-symbols-outlined nav-icon">account_balance</span>
+					<span>Contribution Table</span>
+				</span>
+				<span class="material-symbols-outlined">expand_more</span>
+			</button>
+
+			<div class="collapse <?php echo $isContributionSectionActive ? 'show' : ''; ?>" id="contributionMenu">
+				<div class="sub">
+					<?php if ($sssBracketUrl): ?>
+						<a href="<?php echo htmlspecialchars($sssBracketUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isSssBracketActive ? 'is-active' : ''; ?>">
+							<span class="nav-left">
+								<span class="material-symbols-outlined nav-icon">table_view</span>
+								<span>SSS Bracket</span>
+							</span>
+						</a>
+					<?php else: ?>
+						<a href="#" onclick="return false;" aria-disabled="true" style="opacity:.75;">
+							<span class="nav-left">
+								<span class="material-symbols-outlined nav-icon">table_view</span>
+								<span>SSS Bracket</span>
+							</span>
+						</a>
+					<?php endif; ?>
+
+					<?php if ($philhealthContributionUrl): ?>
+						<a href="<?php echo htmlspecialchars($philhealthContributionUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isPhilhealthContributionActive ? 'is-active' : ''; ?>">
+							<span class="nav-left">
+								<span class="material-symbols-outlined nav-icon">health_and_safety</span>
+								<span>Philhealth Contribution</span>
+							</span>
+						</a>
+					<?php else: ?>
+						<a href="#" onclick="return false;" aria-disabled="true" style="opacity:.75;">
+							<span class="nav-left">
+								<span class="material-symbols-outlined nav-icon">health_and_safety</span>
+								<span>Philhealth Contribution</span>
+							</span>
+						</a>
+					<?php endif; ?>
+
+					<?php if ($pagibigContributionUrl): ?>
+						<a href="<?php echo htmlspecialchars($pagibigContributionUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isPagibigContributionActive ? 'is-active' : ''; ?>">
+							<span class="nav-left">
+								<span class="material-symbols-outlined nav-icon">savings</span>
+								<span>PAG-IBIG Contribution</span>
+							</span>
+						</a>
+					<?php else: ?>
+						<a href="#" onclick="return false;" aria-disabled="true" style="opacity:.75;">
+							<span class="nav-left">
+								<span class="material-symbols-outlined nav-icon">savings</span>
+								<span>PAG-IBIG Contribution</span>
+							</span>
+						</a>
+					<?php endif; ?>
+				</div>
+			</div>
+
+			<?php if ($dailyTimeRecordUrl): ?>
+				<a href="<?php echo htmlspecialchars($dailyTimeRecordUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isDailyTimeRecordActive ? 'is-active' : ''; ?>">
+					<span class="nav-left">
+						<span class="material-symbols-outlined nav-icon">schedule</span>
+						<span>Daily Time Record</span>
+					</span>
+				</a>
+			<?php else: ?>
+				<a href="#" onclick="return false;" aria-disabled="true" style="opacity:.75;">
+					<span class="nav-left">
+						<span class="material-symbols-outlined nav-icon">schedule</span>
+						<span>Daily Time Record</span>
+					</span>
+				</a>
+			<?php endif; ?>
+
+			<a href="<?php echo htmlspecialchars($logsUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isLogsActive ? 'is-active' : ''; ?>">
+				<span class="nav-left">
+					<span class="material-symbols-outlined nav-icon">description</span>
+					<span>Activity Logs</span>
+				</span>
+			</a>
 		<?php endif; ?>
 	</nav>
 </aside>
