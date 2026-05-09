@@ -46,6 +46,95 @@ function rl_storage_dir(): string
 }
 
 /**
+ * Comma-separated allowlist of IPs (and/or IPv4 CIDRs) that bypass rate limiting.
+ * Example: RATE_LIMIT_BYPASS_IPS="127.0.0.1,::1,192.168.1.10,192.168.0.0/16"
+ *
+ * IMPORTANT: Do not set this broadly in production.
+ * If you run behind a reverse proxy, ensure REMOTE_ADDR reflects real clients
+ * (or enable TRUST_PROXY cautiously) before relying on this.
+ *
+ * @return string[]
+ */
+function rl_bypass_ip_rules(): array
+{
+    if (!function_exists('env')) {
+        return [];
+    }
+    $raw = (string)env('RATE_LIMIT_BYPASS_IPS', '');
+    if (trim($raw) === '') {
+        return [];
+    }
+    $parts = preg_split('/[;,\n\r]+/', $raw);
+    if (!is_array($parts)) {
+        return [];
+    }
+    $rules = [];
+    foreach ($parts as $p) {
+        $p = trim((string)$p);
+        if ($p !== '') {
+            $rules[] = $p;
+        }
+    }
+    return $rules;
+}
+
+function rl_ipv4_in_cidr(string $ip, string $cidr): bool
+{
+    if (!str_contains($cidr, '/')) {
+        return false;
+    }
+
+    [$base, $bits] = explode('/', $cidr, 2);
+    $base = trim($base);
+    $bits = trim($bits);
+
+    if ($base === '' || $bits === '' || !ctype_digit($bits)) {
+        return false;
+    }
+
+    $ipLong = ip2long($ip);
+    $baseLong = ip2long($base);
+    if ($ipLong === false || $baseLong === false) {
+        return false;
+    }
+
+    $maskBits = (int)$bits;
+    if ($maskBits < 0 || $maskBits > 32) {
+        return false;
+    }
+
+    $mask = $maskBits === 0 ? 0 : (-1 << (32 - $maskBits));
+    return (($ipLong & $mask) === ($baseLong & $mask));
+}
+
+function rl_is_bypassed_ip(string $ip): bool
+{
+    if ($ip === '' || $ip === 'unknown') {
+        return false;
+    }
+
+    $rules = rl_bypass_ip_rules();
+    if ($rules === []) {
+        return false;
+    }
+
+    foreach ($rules as $rule) {
+        if ($rule === $ip) {
+            return true;
+        }
+
+        // CIDR support for IPv4
+        if (str_contains($rule, '/') && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            if (rl_ipv4_in_cidr($ip, $rule)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
  * @return array{allowed:bool, remaining:int, reset:int}
  */
 function rate_limit(string $namespace, int $max, int $windowSeconds, ?string $identifier = null): array
@@ -54,6 +143,19 @@ function rate_limit(string $namespace, int $max, int $windowSeconds, ?string $id
     $windowSeconds = max(1, $windowSeconds);
 
     $id = $identifier ?? rl_client_ip();
+
+    // Optional bypass: if the identifier is an IP (or comes from client IP), do not limit.
+    $ipToCheck = null;
+    if ($identifier === null) {
+        $ipToCheck = $id;
+    } elseif (filter_var($identifier, FILTER_VALIDATE_IP)) {
+        $ipToCheck = $identifier;
+    }
+    if (is_string($ipToCheck) && rl_is_bypassed_ip($ipToCheck)) {
+        $now = time();
+        return ['allowed' => true, 'remaining' => $max, 'reset' => $now + $windowSeconds];
+    }
+
     $key = hash('sha256', $namespace . '|' . $id);
 
     $dir = rl_storage_dir();

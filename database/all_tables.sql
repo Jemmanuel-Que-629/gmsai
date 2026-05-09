@@ -66,6 +66,7 @@ CREATE TABLE location_rate (
 🔵 5. EMPLOYEES (FIXED)
 CREATE TABLE employees (
   employee_id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_num_id	varchar(50),
   user_id INT NULL,
   first_name VARCHAR(100) NOT NULL,
   middle_name VARCHAR(100),
@@ -76,6 +77,8 @@ CREATE TABLE employees (
   salary_type ENUM('daily', 'weekly', 'bi-weekly', 'semi-monthly', 'monthly') DEFAULT 'semi-monthly',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  is_archived	tinyint(1) NOT NULL DEFAULT 0,
+  archived_at	timestamp NULL,
 
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
   FOREIGN KEY (location_id) REFERENCES location_rate(location_id) ON DELETE CASCADE

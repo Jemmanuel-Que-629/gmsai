@@ -83,9 +83,6 @@ $logsJson = json_encode($logs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSO
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-600" style="color: #003366;">My Activity Logs</h5>
-                        <small class="text-muted" style="font-size: 0.7rem;">
-                            (Logged in as: <?php echo ($roleId === 1 ? 'ACCOUNTING' : 'HR'); ?>)
-                        </small>
                     <input type="text" id="tabulator-search" class="form-control form-control-sm w-25" placeholder="Search all columns...">
                 </div>
                 <div class="card-body">

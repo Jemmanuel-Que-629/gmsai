@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2026 at 12:06 PM
+-- Generation Time: May 09, 2026 at 01:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,6 +57,7 @@ CREATE TABLE `attendance` (
 
 CREATE TABLE `employees` (
   `employee_id` int(11) NOT NULL,
+  `employee_num_id` varchar(50) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `first_name` varchar(100) NOT NULL,
   `middle_name` varchar(100) DEFAULT NULL,
@@ -64,28 +65,28 @@ CREATE TABLE `employees` (
   `position` varchar(100) NOT NULL,
   `department` varchar(100) NOT NULL,
   `location_id` int(11) NOT NULL,
-  `salary_type` enum('daily','monthly') DEFAULT 'daily',
+  `salary_type` enum('daily','weekly','bi-weekly','semi-monthly','monthly') DEFAULT 'semi-monthly',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_archived` tinyint(1) DEFAULT 0,
+  `archived_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `gov_contribution_settings`
+-- Dumping data for table `employees`
 --
 
-CREATE TABLE `gov_contribution_settings` (
-  `setting_id` int(11) NOT NULL,
-  `agency_name` varchar(50) NOT NULL,
-  `employee_rate` decimal(5,4) NOT NULL,
-  `employer_rate` decimal(5,4) NOT NULL,
-  `min_salary_base` decimal(10,2) DEFAULT 0.00,
-  `max_salary_base` decimal(10,2) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `effective_from` date NOT NULL,
-  `effective_to` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `employees` (`employee_id`, `employee_num_id`, `user_id`, `first_name`, `middle_name`, `last_name`, `position`, `department`, `location_id`, `salary_type`, `created_at`, `updated_at`, `is_archived`, `archived_at`) VALUES
+(1, 'SEC-001', NULL, 'Juan', 'Pineda', 'Dela Cruz', 'Security Guard', 'Security', 10, 'semi-monthly', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(2, 'ADM-002', NULL, 'Maria Clara', 'Santos', 'Reyes', 'Accounting Clerk', 'Finance', 10, 'semi-monthly', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(3, 'SEC-003', NULL, 'Ricardo', 'de Sena', 'Dalisay', 'Detachment Commander', 'Security', 9, 'semi-monthly', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(4, 'OPS-004', NULL, 'Stephen Ian', 'Lopez', 'Veneracion', 'IT Administrator', 'Operations', 5, 'semi-monthly', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(5, 'FAC-005', NULL, 'Elena', 'Bautista', 'Mercado', 'Maintenance Staff', 'Facilities', 6, 'daily', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(6, 'SEC-006', NULL, 'Antonio', 'Luna', 'Agoncillo', 'Roving Guard', 'Security', 7, 'daily', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(7, 'FAC-007', NULL, 'Sisa', 'Bernardo', 'Basilio', 'Janitress', 'Facilities', 4, 'daily', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(8, 'ADM-008', NULL, 'Crisostomo', 'Magsaysay', 'Ibarra', 'Payroll Specialist', 'HR', 10, 'semi-monthly', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(9, 'FAC-009', NULL, 'Gabriela', 'Silang', 'Estrada', 'Head Nurse', 'Medical', 8, 'semi-monthly', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL),
+(10, 'FAC-010', NULL, 'Emilio', 'Jacinto', 'Aguinaldo', 'Utility Worker', 'Facilities', 1, 'daily', '2026-05-09 09:37:48', '2026-05-09 10:04:35', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -116,6 +117,22 @@ CREATE TABLE `location_rate` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `location_rate`
+--
+
+INSERT INTO `location_rate` (`location_id`, `location_name`, `daily_rate`, `created_at`, `updated_at`) VALUES
+(1, 'Naga', 415.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(2, 'Pangasinan', 435.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(3, 'Bulacan', 525.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(4, 'Pampanga', 540.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(5, 'Laguna', 540.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(6, 'Cavite', 540.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(7, 'Biñan', 540.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(8, 'Batangas', 540.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(9, 'San Pedro', 560.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45'),
+(10, 'Manila', 645.00, '2026-05-09 09:29:45', '2026-05-09 09:29:45');
+
 -- --------------------------------------------------------
 
 --
@@ -141,7 +158,35 @@ INSERT INTO `login_logs` (`log_id`, `user_id`, `login_time`, `logout_time`, `ip_
 (3, 1, '2026-05-03 00:58:41', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
 (4, 1, '2026-05-03 12:37:37', '2026-05-03 15:53:08', '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
 (5, 1, '2026-05-03 15:53:14', '2026-05-03 15:54:41', '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
-(6, 2, '2026-05-03 15:54:46', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36');
+(6, 2, '2026-05-03 15:54:46', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
+(7, 2, '2026-05-09 16:55:42', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
+(8, 2, '2026-05-09 17:43:33', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pagibig_contribution`
+--
+
+CREATE TABLE `pagibig_contribution` (
+  `pagibig_id` int(11) NOT NULL,
+  `salary_min` decimal(10,2) NOT NULL,
+  `salary_max` decimal(10,2) NOT NULL,
+  `employee_rate` decimal(5,4) NOT NULL,
+  `employer_rate` decimal(5,4) NOT NULL,
+  `salary_ceiling` decimal(10,2) NOT NULL,
+  `effective_from` date NOT NULL,
+  `effective_to` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pagibig_contribution`
+--
+
+INSERT INTO `pagibig_contribution` (`pagibig_id`, `salary_min`, `salary_max`, `employee_rate`, `employer_rate`, `salary_ceiling`, `effective_from`, `effective_to`, `created_at`) VALUES
+(1, 1000.00, 1500.00, 0.0100, 0.0200, 10000.00, '2026-01-01', NULL, '2026-05-03 11:21:50'),
+(2, 1500.01, 9999999.99, 0.0200, 0.0200, 10000.00, '2026-01-01', NULL, '2026-05-03 11:21:50');
 
 -- --------------------------------------------------------
 
@@ -209,6 +254,31 @@ CREATE TABLE `payroll_rates` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `philhealth_contribution`
+--
+
+CREATE TABLE `philhealth_contribution` (
+  `philhealth_id` int(11) NOT NULL,
+  `monthly_rate` decimal(5,4) NOT NULL,
+  `employee_share` decimal(5,4) NOT NULL,
+  `employer_share` decimal(5,4) NOT NULL,
+  `salary_floor` decimal(10,2) NOT NULL,
+  `salary_ceiling` decimal(10,2) NOT NULL,
+  `effective_from` date NOT NULL,
+  `effective_to` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `philhealth_contribution`
+--
+
+INSERT INTO `philhealth_contribution` (`philhealth_id`, `monthly_rate`, `employee_share`, `employer_share`, `salary_floor`, `salary_ceiling`, `effective_from`, `effective_to`, `created_at`) VALUES
+(1, 0.0550, 0.5000, 0.5000, 10000.00, 50000.00, '2026-01-01', NULL, '2026-05-03 11:19:49');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `roles`
 --
 
@@ -224,7 +294,8 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`role_id`, `role_name`, `created_at`) VALUES
 (1, 'HR', '2026-05-02 14:46:05'),
-(2, 'ACCOUNTING', '2026-05-02 14:46:05');
+(2, 'ACCOUNTING', '2026-05-02 14:46:05'),
+(3, 'HEAD ACCOUNTING', '2026-05-09 09:31:37');
 
 -- --------------------------------------------------------
 
@@ -236,11 +307,81 @@ CREATE TABLE `sss_bracket` (
   `sss_id` int(11) NOT NULL,
   `lower_limit` decimal(10,2) DEFAULT NULL,
   `upper_limit` decimal(10,2) DEFAULT NULL,
+  `msc` decimal(10,2) DEFAULT NULL,
+  `regular_msc` decimal(10,2) DEFAULT NULL,
+  `mpf_msc` decimal(10,2) DEFAULT NULL,
   `employee_contribution` decimal(10,2) DEFAULT NULL,
   `employer_contribution` decimal(10,2) DEFAULT NULL,
   `effective_from` date NOT NULL,
   `effective_to` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sss_bracket`
+--
+
+INSERT INTO `sss_bracket` (`sss_id`, `lower_limit`, `upper_limit`, `msc`, `regular_msc`, `mpf_msc`, `employee_contribution`, `employer_contribution`, `effective_from`, `effective_to`) VALUES
+(1, 0.00, 5249.99, 5000.00, 5000.00, 0.00, 250.00, 510.00, '2025-01-01', NULL),
+(2, 5250.00, 5749.99, 5500.00, 5500.00, 0.00, 275.00, 560.00, '2025-01-01', NULL),
+(3, 5750.00, 6249.99, 6000.00, 6000.00, 0.00, 300.00, 610.00, '2025-01-01', NULL),
+(4, 6250.00, 6749.99, 6500.00, 6500.00, 0.00, 325.00, 660.00, '2025-01-01', NULL),
+(5, 6750.00, 7249.99, 7000.00, 7000.00, 0.00, 350.00, 710.00, '2025-01-01', NULL),
+(6, 7250.00, 7749.99, 7500.00, 7500.00, 0.00, 375.00, 760.00, '2025-01-01', NULL),
+(7, 7750.00, 8249.99, 8000.00, 8000.00, 0.00, 400.00, 810.00, '2025-01-01', NULL),
+(8, 8250.00, 8749.99, 8500.00, 8500.00, 0.00, 425.00, 860.00, '2025-01-01', NULL),
+(9, 8750.00, 9249.99, 9000.00, 9000.00, 0.00, 450.00, 910.00, '2025-01-01', NULL),
+(10, 9250.00, 9749.99, 9500.00, 9500.00, 0.00, 475.00, 960.00, '2025-01-01', NULL),
+(11, 9750.00, 10249.99, 10000.00, 10000.00, 0.00, 500.00, 1010.00, '2025-01-01', NULL),
+(12, 10250.00, 10749.99, 10500.00, 10500.00, 0.00, 525.00, 1060.00, '2025-01-01', NULL),
+(13, 10750.00, 11249.99, 11000.00, 11000.00, 0.00, 550.00, 1110.00, '2025-01-01', NULL),
+(14, 11250.00, 11749.99, 11500.00, 11500.00, 0.00, 575.00, 1160.00, '2025-01-01', NULL),
+(15, 11750.00, 12249.99, 12000.00, 12000.00, 0.00, 600.00, 1210.00, '2025-01-01', NULL),
+(16, 12250.00, 12749.99, 12500.00, 12500.00, 0.00, 625.00, 1260.00, '2025-01-01', NULL),
+(17, 12750.00, 13249.99, 13000.00, 13000.00, 0.00, 650.00, 1310.00, '2025-01-01', NULL),
+(18, 13250.00, 13749.99, 13500.00, 13500.00, 0.00, 675.00, 1360.00, '2025-01-01', NULL),
+(19, 13750.00, 14249.99, 14000.00, 14000.00, 0.00, 700.00, 1410.00, '2025-01-01', NULL),
+(20, 14250.00, 14749.99, 14500.00, 14500.00, 0.00, 725.00, 1460.00, '2025-01-01', NULL),
+(21, 14750.00, 15249.99, 15000.00, 15000.00, 0.00, 750.00, 1530.00, '2025-01-01', NULL),
+(22, 15250.00, 15749.99, 15500.00, 15500.00, 0.00, 775.00, 1580.00, '2025-01-01', NULL),
+(23, 15750.00, 16249.99, 16000.00, 16000.00, 0.00, 800.00, 1630.00, '2025-01-01', NULL),
+(24, 16250.00, 16749.99, 16500.00, 16500.00, 0.00, 825.00, 1680.00, '2025-01-01', NULL),
+(25, 16750.00, 17249.99, 17000.00, 17000.00, 0.00, 850.00, 1730.00, '2025-01-01', NULL),
+(26, 17250.00, 17749.99, 17500.00, 17500.00, 0.00, 875.00, 1780.00, '2025-01-01', NULL),
+(27, 17750.00, 18249.99, 18000.00, 18000.00, 0.00, 900.00, 1830.00, '2025-01-01', NULL),
+(28, 18250.00, 18749.99, 18500.00, 18500.00, 0.00, 925.00, 1880.00, '2025-01-01', NULL),
+(29, 18750.00, 19249.99, 19000.00, 19000.00, 0.00, 950.00, 1930.00, '2025-01-01', NULL),
+(30, 19250.00, 19749.99, 19500.00, 19500.00, 0.00, 975.00, 1980.00, '2025-01-01', NULL),
+(31, 19750.00, 20249.99, 20000.00, 20000.00, 0.00, 1000.00, 2030.00, '2025-01-01', NULL),
+(32, 20250.00, 20749.99, 20500.00, 20000.00, 500.00, 1025.00, 2080.00, '2025-01-01', NULL),
+(33, 20750.00, 21249.99, 21000.00, 20000.00, 1000.00, 1050.00, 2130.00, '2025-01-01', NULL),
+(34, 21250.00, 21749.99, 21500.00, 20000.00, 1500.00, 1075.00, 2180.00, '2025-01-01', NULL),
+(35, 21750.00, 22249.99, 22000.00, 20000.00, 2000.00, 1100.00, 2230.00, '2025-01-01', NULL),
+(36, 22250.00, 22749.99, 22500.00, 20000.00, 2500.00, 1125.00, 2280.00, '2025-01-01', NULL),
+(37, 22750.00, 23249.99, 23000.00, 20000.00, 3000.00, 1150.00, 2330.00, '2025-01-01', NULL),
+(38, 23250.00, 23749.99, 23500.00, 20000.00, 3500.00, 1175.00, 2380.00, '2025-01-01', NULL),
+(39, 23750.00, 24249.99, 24000.00, 20000.00, 4000.00, 1200.00, 2430.00, '2025-01-01', NULL),
+(40, 24250.00, 24749.99, 24500.00, 20000.00, 4500.00, 1225.00, 2480.00, '2025-01-01', NULL),
+(41, 24750.00, 25249.99, 25000.00, 20000.00, 5000.00, 1250.00, 2530.00, '2025-01-01', NULL),
+(42, 25250.00, 25749.99, 25500.00, 20000.00, 5500.00, 1275.00, 2580.00, '2025-01-01', NULL),
+(43, 25750.00, 26249.99, 26000.00, 20000.00, 6000.00, 1300.00, 2630.00, '2025-01-01', NULL),
+(44, 26250.00, 26749.99, 26500.00, 20000.00, 6500.00, 1325.00, 2680.00, '2025-01-01', NULL),
+(45, 26750.00, 27249.99, 27000.00, 20000.00, 7000.00, 1350.00, 2730.00, '2025-01-01', NULL),
+(46, 27250.00, 27749.99, 27500.00, 20000.00, 7500.00, 1375.00, 2780.00, '2025-01-01', NULL),
+(47, 27750.00, 28249.99, 28000.00, 20000.00, 8000.00, 1400.00, 2830.00, '2025-01-01', NULL),
+(48, 28250.00, 28749.99, 28500.00, 20000.00, 8500.00, 1425.00, 2880.00, '2025-01-01', NULL),
+(49, 28750.00, 29249.99, 29000.00, 20000.00, 9000.00, 1450.00, 2930.00, '2025-01-01', NULL),
+(50, 29250.00, 29749.99, 29500.00, 20000.00, 9500.00, 1475.00, 2980.00, '2025-01-01', NULL),
+(51, 29750.00, 30249.99, 30000.00, 20000.00, 10000.00, 1500.00, 3030.00, '2025-01-01', NULL),
+(52, 30250.00, 30749.99, 30500.00, 20000.00, 10500.00, 1525.00, 3080.00, '2025-01-01', NULL),
+(53, 30750.00, 31249.99, 31000.00, 20000.00, 11000.00, 1550.00, 3130.00, '2025-01-01', NULL),
+(54, 31250.00, 31749.99, 31500.00, 20000.00, 11500.00, 1575.00, 3180.00, '2025-01-01', NULL),
+(55, 31750.00, 32249.99, 32000.00, 20000.00, 12000.00, 1600.00, 3230.00, '2025-01-01', NULL),
+(56, 32250.00, 32749.99, 32500.00, 20000.00, 12500.00, 1625.00, 3280.00, '2025-01-01', NULL),
+(57, 32750.00, 33249.99, 33000.00, 20000.00, 13000.00, 1650.00, 3330.00, '2025-01-01', NULL),
+(58, 33250.00, 33749.99, 33500.00, 20000.00, 13500.00, 1675.00, 3380.00, '2025-01-01', NULL),
+(59, 33750.00, 34249.99, 34000.00, 20000.00, 14000.00, 1700.00, 3430.00, '2025-01-01', NULL),
+(60, 34250.00, 34749.99, 34500.00, 20000.00, 14500.00, 1725.00, 3480.00, '2025-01-01', NULL),
+(61, 34750.00, 999999.99, 35000.00, 20000.00, 15000.00, 1750.00, 3530.00, '2025-01-01', NULL);
 
 -- --------------------------------------------------------
 
@@ -298,12 +439,6 @@ ALTER TABLE `employees`
   ADD KEY `location_id` (`location_id`);
 
 --
--- Indexes for table `gov_contribution_settings`
---
-ALTER TABLE `gov_contribution_settings`
-  ADD PRIMARY KEY (`setting_id`);
-
---
 -- Indexes for table `holidays`
 --
 ALTER TABLE `holidays`
@@ -321,6 +456,12 @@ ALTER TABLE `location_rate`
 ALTER TABLE `login_logs`
   ADD PRIMARY KEY (`log_id`),
   ADD KEY `fk_login_logs_user` (`user_id`);
+
+--
+-- Indexes for table `pagibig_contribution`
+--
+ALTER TABLE `pagibig_contribution`
+  ADD PRIMARY KEY (`pagibig_id`);
 
 --
 -- Indexes for table `payroll`
@@ -349,6 +490,12 @@ ALTER TABLE `payroll_details`
 --
 ALTER TABLE `payroll_rates`
   ADD PRIMARY KEY (`rate_id`);
+
+--
+-- Indexes for table `philhealth_contribution`
+--
+ALTER TABLE `philhealth_contribution`
+  ADD PRIMARY KEY (`philhealth_id`);
 
 --
 -- Indexes for table `roles`
@@ -390,13 +537,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `employee_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `gov_contribution_settings`
---
-ALTER TABLE `gov_contribution_settings`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `employee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `holidays`
@@ -408,13 +549,19 @@ ALTER TABLE `holidays`
 -- AUTO_INCREMENT for table `location_rate`
 --
 ALTER TABLE `location_rate`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `pagibig_contribution`
+--
+ALTER TABLE `pagibig_contribution`
+  MODIFY `pagibig_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `payroll`
@@ -441,16 +588,22 @@ ALTER TABLE `payroll_rates`
   MODIFY `rate_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `philhealth_contribution`
+--
+ALTER TABLE `philhealth_contribution`
+  MODIFY `philhealth_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `sss_bracket`
 --
 ALTER TABLE `sss_bracket`
-  MODIFY `sss_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `sss_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `users`
