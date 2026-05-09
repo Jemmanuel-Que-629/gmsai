@@ -177,7 +177,7 @@ include '../../global/header.php';
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-<script>
+<script nonce="<?php echo htmlspecialchars(csp_nonce(), ENT_QUOTES, 'UTF-8'); ?>">
 // Line Graph - Payroll Trends
 const ctxPayroll = document.getElementById('payrollChart').getContext('2d');
 new Chart(ctxPayroll, {

@@ -34,7 +34,7 @@ if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '
                 <div class="card-header">
                     <h5 class="card-title mb-0 text-center" style="font-size: 1.5rem; font-weight: bold;">
                         <i class="material-icons align-middle me-2">payments</i>
-                        Payroll For <?php echo $viewingText; ?>
+						Payroll For <?php echo htmlspecialchars((string)$viewingText, ENT_QUOTES, 'UTF-8'); ?>
                     </h5>
                 </div>
                 <div class="card-body">

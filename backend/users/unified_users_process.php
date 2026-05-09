@@ -3,9 +3,50 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/db_connection.php';
+require_once __DIR__ . '/../../middleware/csrf.php';
+require_once __DIR__ . '/../../middleware/rate_limiter.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
 	session_start();
+}
+
+csrf_init();
+
+function requirePostAndValidCsrf(string $redirectUrl): void
+{
+	if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+		setFlashToast('error', 'Error', 'Invalid request');
+		redirectTo($redirectUrl);
+	}
+	$token = isset($_POST['csrf_token']) ? (string)$_POST['csrf_token'] : null;
+	if (!csrf_validate($token)) {
+		setFlashToast('error', 'Error', 'Security check failed. Please try again.');
+		redirectTo($redirectUrl);
+	}
+}
+
+function enforceAuthRateLimit(string $scope, string $identifier, string $redirectUrl): void
+{
+	// Per instruction: max 5 attempts per 10-15 min for auth routes.
+	$res = rate_limit('auth:' . $scope, 5, 15 * 60, $identifier);
+	if ($res['allowed']) {
+		return;
+	}
+	$retryAfter = max(1, $res['reset'] - time());
+	$mins = (int)ceil($retryAfter / 60);
+	setFlashToast('error', 'Error', 'Too many attempts. Please try again in ' . $mins . ' minute(s).');
+	redirectTo($redirectUrl);
+}
+
+function cleanString(mixed $val, int $maxLen): string
+{
+	if (!is_scalar($val)) return '';
+	$s = trim((string)$val);
+	$s = str_replace("\0", '', $s);
+	if ($maxLen > 0 && strlen($s) > $maxLen) {
+		$s = substr($s, 0, $maxLen);
+	}
+	return $s;
 }
 
 function setFlashToast(string $icon, string $title, string $text = ''): void
@@ -64,18 +105,26 @@ function validatePasswordPolicy(string $password): bool
 
 function handleLogin(PDO $conn): never
 {
-	if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-		setFlashToast('error', 'Error', 'Invalid request');
-		redirectTo(BASE_URL . 'login.php');
-	}
+	requirePostAndValidCsrf(BASE_URL . 'login.php');
 
-	$email = trim((string)($_POST['email'] ?? ''));
-	$password = trim((string)($_POST['password'] ?? ''));
+	$email = cleanString($_POST['email'] ?? '', 254);
+	$password = cleanString($_POST['password'] ?? '', 255);
+
+	$ip = rl_client_ip();
+	// Rate limit by IP first to slow down brute force even without an email.
+	enforceAuthRateLimit('login_ip', $ip, BASE_URL . 'login.php');
 
 	if ($email === '' || $password === '') {
 		setFlashToast('error', 'Error', 'All fields are required');
 		redirectTo(BASE_URL . 'login.php');
 	}
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		setFlashToast('error', 'Error', 'Invalid email address');
+		redirectTo(BASE_URL . 'login.php');
+	}
+
+	// Also rate limit per IP+email.
+	enforceAuthRateLimit('login_ip_email', $ip . '|' . strtolower($email), BASE_URL . 'login.php');
 
 	try {
 		$stmt = $conn->prepare('
@@ -188,11 +237,13 @@ function handleLogout(PDO $conn): never
 
 function handleChangePassword(PDO $conn): never
 {
+	requirePostAndValidCsrf(BASE_URL . 'system_users/profile.php');
 	$userId = ensureLoggedIn();
+	enforceAuthRateLimit('change_password', rl_client_ip() . '|' . (string)$userId, BASE_URL . 'system_users/profile.php');
 
-	$current = (string)($_POST['current_password'] ?? '');
-	$new = (string)($_POST['new_password'] ?? '');
-	$confirm = (string)($_POST['confirm_password'] ?? '');
+	$current = cleanString($_POST['current_password'] ?? '', 255);
+	$new = cleanString($_POST['new_password'] ?? '', 255);
+	$confirm = cleanString($_POST['confirm_password'] ?? '', 255);
 
 	if ($new === '' || $confirm === '' || $current === '') {
 		setFlashToast('error', 'Error', 'All password fields are required.');
@@ -230,9 +281,11 @@ function handleChangePassword(PDO $conn): never
 
 function handleUpdateProfile(PDO $conn): never
 {
+	requirePostAndValidCsrf(BASE_URL . 'system_users/profile.php');
 	$userId = ensureLoggedIn();
+	enforceAuthRateLimit('update_profile', rl_client_ip() . '|' . (string)$userId, BASE_URL . 'system_users/profile.php');
 
-	$recoveryEmail = trim((string)($_POST['recovery_email'] ?? ''));
+	$recoveryEmail = cleanString($_POST['recovery_email'] ?? '', 254);
 	$hasRecoveryEmail = $recoveryEmail !== '';
 	if ($hasRecoveryEmail && !filter_var($recoveryEmail, FILTER_VALIDATE_EMAIL)) {
 		setFlashToast('error', 'Error', 'Please enter a valid recovery email.');
@@ -314,7 +367,7 @@ function handleUpdateProfile(PDO $conn): never
 	}
 }
 
-$action = (string)($_POST['action'] ?? $_GET['action'] ?? '');
+$action = cleanString($_POST['action'] ?? $_GET['action'] ?? '', 40);
 if ($action === '' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['email'], $_POST['password'])) {
 	$action = 'login';
 }

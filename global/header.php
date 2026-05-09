@@ -244,7 +244,7 @@ $docTitleJs = json_encode($docTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
+<script nonce="<?php echo htmlspecialchars(csp_nonce(), ENT_QUOTES, 'UTF-8'); ?>">
 	(function () {
 		// Always set browser tab title
 		document.title = <?php echo $docTitleJs; ?>;

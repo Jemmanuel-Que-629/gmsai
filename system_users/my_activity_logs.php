@@ -56,7 +56,7 @@ $query = "
 $stmt = $conn->prepare($query);
 $stmt->execute($params);
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$logsJson = json_encode($logs);
+$logsJson = json_encode($logs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -99,7 +99,7 @@ $logsJson = json_encode($logs);
 <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
 
-<script>
+<script nonce="<?php echo htmlspecialchars(csp_nonce(), ENT_QUOTES, 'UTF-8'); ?>">
     // Ensure tableData is correctly parsed from the PHP json_encode
     const tableData = <?php echo $logsJson; ?>;
 

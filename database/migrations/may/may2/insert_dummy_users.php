@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 try {
     // DB CONNECTION (uses .env via config/db_connection.php)
     require_once __DIR__ . '/../../../../config/db_connection.php';
@@ -21,9 +23,13 @@ try {
     echo "Roles inserted.<br>";
 
     // -------------------------
-    // HASH PASSWORD
+    // HASH PASSWORD (no hardcoded passwords)
     // -------------------------
-    $hashedPassword = password_hash("christina_828", PASSWORD_BCRYPT);
+    $plainPassword = (string)env('DUMMY_USER_PASSWORD', '');
+    if ($plainPassword === '') {
+        throw new RuntimeException('Missing DUMMY_USER_PASSWORD for dummy users migration.');
+    }
+    $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
 
     // -------------------------
     // INSERT USERS
@@ -61,7 +67,8 @@ try {
 
     echo "Users inserted successfully.";
 
-} catch (PDOException $e) {
-    die("Error: " . $e->getMessage());
+} catch (Throwable $e) {
+    error_log('Migration failed: ' . $e->getMessage());
+    die('Migration failed. Check logs.');
 }
 ?>

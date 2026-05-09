@@ -23,3 +23,11 @@
 - Use sweet alert and bootstrap tabulator table (keep the version used same for all of my files)
 
 - Keep code modular (separate DB connection and logic)
+
+
+//SECURITY
+
+1. "Add rate limiting to all endpoints, and max 5 attempts for all authentication routes per 10-15 min."
+2. "Scan the entire codebase for hardcoded API keys, tokens, or passwords. Move everything to environment variables and confirm nothing sensitive is bundled into the frontend or committed to git."
+3. "Sanitize every user input and reject oversized or malformed payloads."
+4. "Now do a full security audit and list any remaining vulnerabilities."

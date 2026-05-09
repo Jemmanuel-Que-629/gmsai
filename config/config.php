@@ -83,6 +83,24 @@ if (!defined('DOMAIN_PATH')) {
 // Load /.env
 load_env_file(DOMAIN_PATH);
 
+// Session hardening (must run before session_start() in entrypoints)
+if (PHP_SAPI !== 'cli') {
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.cookie_httponly', '1');
+
+    // Only mark secure cookies when HTTPS is actually used.
+    if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')) {
+        ini_set('session.cookie_secure', '1');
+    }
+
+    $sameSite = (string)env('SESSION_SAMESITE', 'Lax');
+    if (!in_array($sameSite, ['Lax', 'Strict', 'None'], true)) {
+        $sameSite = 'Lax';
+    }
+    @ini_set('session.cookie_samesite', $sameSite);
+}
+
 // Timezone
 define('DEFAULT_TIMEZONE', 'Asia/Manila');
 ini_set('date.timezone', DEFAULT_TIMEZONE);
@@ -162,3 +180,19 @@ if (env_bool('APP_DEBUG', SYSTEM_FLAG === 'DEV')) {
 
 // HTTP error pages (existing folder is /error)
 define('HTTP_403', DOMAIN_PATH . '/error/403.php');
+
+// -------------------------------------------------
+// Global request guards + rate limiting (per endpoint)
+// -------------------------------------------------
+if (PHP_SAPI !== 'cli') {
+    require_once DOMAIN_PATH . '/middleware/security_headers.php';
+    send_security_headers();
+
+    require_once DOMAIN_PATH . '/middleware/request_guard.php';
+    enforce_request_guards();
+
+    require_once DOMAIN_PATH . '/middleware/rate_limiter.php';
+    $maxPerMinute = (int)env('RATE_LIMIT_MAX_PER_MINUTE', 5);
+    $path = (string)($_SERVER['PHP_SELF'] ?? 'unknown');
+    enforce_rate_limit('global:' . $path, max(1, $maxPerMinute), 60);
+}

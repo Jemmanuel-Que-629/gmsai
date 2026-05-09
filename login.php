@@ -1,5 +1,10 @@
 <?php
+require_once __DIR__ . '/config/config.php';
+
 session_start();
+
+require_once __DIR__ . '/middleware/csrf.php';
+csrf_init();
 
 $flashToast = null;
 if (isset($_SESSION['flash_toast']) && is_array($_SESSION['flash_toast'])) {
@@ -259,6 +264,8 @@ if (isset($_SESSION['flash_toast']) && is_array($_SESSION['flash_toast'])) {
                     </div>
 
                     <form action="backend/users/unified_users_process.php" method="POST" id="loginForm" novalidate>
+                        <input type="hidden" name="action" value="login">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="input-group-custom">
                             <input type="email" name="email" id="email" placeholder=" " required autocomplete="email">
                             <label for="email">Email address</label>
@@ -289,7 +296,7 @@ if (isset($_SESSION['flash_toast']) && is_array($_SESSION['flash_toast'])) {
         </div>
     </div>
 
-    <script>
+    <script nonce="<?php echo htmlspecialchars(csp_nonce(), ENT_QUOTES, 'UTF-8'); ?>">
         const flashToast = <?php echo json_encode($flashToast, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
         const togglePassword = document.querySelector('#togglePassword');

@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../global/header.php';
 require_once __DIR__ . '/../config/db_connection.php';
 
+require_once __DIR__ . '/../middleware/csrf.php';
+csrf_init();
+
 // Fetch User Data
 $userId = (int)($_SESSION['user_id'] ?? 0);
 
@@ -146,6 +149,7 @@ $fullName = trim(((string)($user['first_name'] ?? '')) . ' ' . ((string)($user['
 
                                 <form action="../backend/users/unified_users_process.php" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" name="action" value="update_profile">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
 
                                     <div class="row g-3">
                                         <div class="col-12 col-md-4">
@@ -184,6 +188,7 @@ $fullName = trim(((string)($user['first_name'] ?? '')) . ' ' . ((string)($user['
                             <div class="card-body">
                                 <form action="../backend/users/unified_users_process.php" method="POST" autocomplete="off">
                                     <input type="hidden" name="action" value="change_password">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
 
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Current password</label>
@@ -244,7 +249,7 @@ $fullName = trim(((string)($user['first_name'] ?? '')) . ' ' . ((string)($user['
     </div>
 </div>
 
-<script>
+<script nonce="<?php echo htmlspecialchars(csp_nonce(), ENT_QUOTES, 'UTF-8'); ?>">
     (function () {
         const newPw = document.getElementById('new_password');
         const req = document.getElementById('pwRequirements');
