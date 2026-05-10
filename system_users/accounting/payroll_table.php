@@ -4,10 +4,50 @@ declare(strict_types=1);
 $pageTitle = 'Payroll Table';
 require_once __DIR__ . '/../../global/header.php';
 
-// Frontend-first defaults (backend wiring can override these later)
-if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '') {
-    $viewingText = 'Selected Period';
+// Ensure DB connection is available for filters/table.
+try {
+    require_once __DIR__ . '/../../config/db_connection.php';
+} catch (Throwable $e) {
+    // Allow page to render without DB in edge cases.
 }
+
+// Cutoff / period selection (defaults to current month and current cutoff).
+$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+$selectedMonth = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('n');
+$selectedCutoff = isset($_GET['cutoff']) ? (string)$_GET['cutoff'] : ((int)date('j') <= 15 ? '1' : '2');
+if ($selectedYear < 2000 || $selectedYear > 2100) {
+    $selectedYear = (int)date('Y');
+}
+if ($selectedMonth < 1 || $selectedMonth > 12) {
+    $selectedMonth = (int)date('n');
+}
+if ($selectedCutoff !== '1' && $selectedCutoff !== '2') {
+    $selectedCutoff = ((int)date('j') <= 15 ? '1' : '2');
+}
+
+$daysInMonth = (int)cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
+$periodStartDay = $selectedCutoff === '1' ? 1 : 16;
+$periodEndDay = $selectedCutoff === '1' ? 15 : $daysInMonth;
+
+$startDate = sprintf('%04d-%02d-%02d', $selectedYear, $selectedMonth, $periodStartDay);
+$endDate = sprintf('%04d-%02d-%02d', $selectedYear, $selectedMonth, $periodEndDay);
+
+$viewingText = date('M', mktime(0, 0, 0, $selectedMonth, 1, $selectedYear))
+    . " {$periodStartDay}-{$periodEndDay}, {$selectedYear}";
+
+$selectedLocation = isset($_GET['location']) ? trim((string)$_GET['location']) : '';
+$locations = [];
+if (isset($conn) && ($conn instanceof PDO)) {
+    try {
+        $locStmt = $conn->prepare('SELECT DISTINCT location_name FROM location_rate ORDER BY location_name ASC');
+        $locStmt->execute();
+        $locations = $locStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    } catch (Throwable $e) {
+        $locations = [];
+    }
+}
+
+// $viewingText is set based on cutoff/month/year above.
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,6 +78,67 @@ if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '
                     </h5>
                 </div>
                 <div class="card-body">
+                    <form class="row g-2 align-items-end mb-3" method="get">
+                        <div class="col-12 col-md-2">
+                            <label class="form-label mb-1">Year</label>
+                            <select name="year" class="form-select">
+                                <?php
+                                $currentYear = (int)date('Y');
+                                for ($y = $currentYear - 3; $y <= $currentYear + 3; $y++) {
+                                    $selected = ($y === $selectedYear) ? 'selected' : '';
+                                    echo "<option value=\"{$y}\" {$selected}>{$y}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-2">
+                            <label class="form-label mb-1">Month</label>
+                            <select name="month" class="form-select">
+                                <?php
+                                for ($m = 1; $m <= 12; $m++) {
+                                    $label = date('F', mktime(0, 0, 0, $m, 1));
+                                    $selected = ($m === $selectedMonth) ? 'selected' : '';
+                                    echo "<option value=\"{$m}\" {$selected}>{$label}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label mb-1">Cutoff Period</label>
+                            <select name="cutoff" class="form-select">
+                                <option value="1" <?php echo $selectedCutoff === '1' ? 'selected' : ''; ?>>1 - 15</option>
+                                <option value="2" <?php echo $selectedCutoff === '2' ? 'selected' : ''; ?>>16 - <?php echo (int)$daysInMonth; ?></option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label mb-1">Location</label>
+                            <select name="location" class="form-select">
+                                <option value="" <?php echo $selectedLocation === '' ? 'selected' : ''; ?>>All Locations</option>
+                                <?php
+                                foreach ($locations as $locName) {
+                                    $locName = (string)$locName;
+                                    $selected = ($locName !== '' && $locName === $selectedLocation) ? 'selected' : '';
+                                    $safe = htmlspecialchars($locName, ENT_QUOTES, 'UTF-8');
+                                    echo "<option value=\"{$safe}\" {$selected}>{$safe}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-2 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100">Apply</button>
+                            <?php
+                            $bulkUrl = '../../backend/payroll/bulk_print_payslip.php?' . http_build_query([
+                                'start_date' => $startDate,
+                                'end_date' => $endDate,
+                                'location' => $selectedLocation,
+                            ]);
+                            ?>
+                            <a class="btn btn-success w-100" target="_blank" href="<?php echo htmlspecialchars($bulkUrl, ENT_QUOTES, 'UTF-8'); ?>">
+                                Bulk Print Payslip
+                            </a>
+                        </div>
+                    </form>
+
                     <div class="table-responsive">
                         <table id="payrollTable" class="table table-striped table-bordered">
                             <thead>
@@ -77,8 +178,8 @@ if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '
                             </thead>
                             <tbody>
                             <?php
-                            if (!isset($conn) || !($conn instanceof PDO) || !class_exists('PayrollCalculator')) {
-                                // Backend wiring pending: keep table layout, render no rows.
+                            if (!isset($conn) || !($conn instanceof PDO)) {
+                                // DB not available.
                             } else {
                                 // New system: list ALL employees (not guards-only)
                                 $sql = "SELECT e.employee_id, e.user_id, e.first_name, e.middle_name, e.last_name,
@@ -92,7 +193,6 @@ if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '
                                         JOIN location_rate lr ON e.location_id = lr.location_id";
 
                                 // Optional location filter (by location_rate.location_name)
-                                $selectedLocation = isset($_GET['location']) ? (string)$_GET['location'] : '';
                                 if ($selectedLocation !== '') {
                                     $sql .= " WHERE lr.location_name = :location_name";
                                 }
@@ -107,23 +207,17 @@ if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '
                                 }
 
                                 $stmt->execute();
-                                $calculator = new PayrollCalculator($conn);
+                                $calculator = class_exists('PayrollCalculator') ? new PayrollCalculator($conn) : null;
 
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                    // Check for attendance in the selected period
-                                    $attendance_check_sql = "SELECT COUNT(*) FROM attendance WHERE employee_id = :employee_id AND work_date BETWEEN :start_date AND :end_date";
-                                    $attendance_check_stmt = $conn->prepare($attendance_check_sql);
-                                    $attendance_check_stmt->bindParam(':employee_id', $row['employee_id'], PDO::PARAM_INT);
-                                    $attendance_check_stmt->bindParam(':start_date', $startDate);
-                                    $attendance_check_stmt->bindParam(':end_date', $endDate);
-                                    $attendance_check_stmt->execute();
-                                    $attendance_count = $attendance_check_stmt->fetchColumn();
-
-                                    $payroll_data = $calculator->calculatePayroll(
-                                        $row['employee_id'], 
-                                        $startDate, 
-                                        $endDate
-                                    );
+                                    $payroll_data = [];
+                                    if ($calculator) {
+                                        $payroll_data = $calculator->calculatePayroll(
+                                            (int)$row['employee_id'],
+                                            $startDate,
+                                            $endDate
+                                        );
+                                    }
 									
                                     // Saved cash advance (schema-normalized via payroll + payroll_deductions)
                                     $saved_cash_advance = 0.0;
@@ -142,44 +236,44 @@ if (!isset($viewingText) || !is_string($viewingText) || trim($viewingText) === '
                                         $cash_advance_stmt->execute();
                                         $saved_cash_advance = (float)($cash_advance_stmt->fetchColumn() ?: 0);
                                     }
+
+                                    // Fallback: if no calculator, use stored payroll summary if available.
+                                    if (!$calculator) {
+                                        $summaryStmt = $conn->prepare('SELECT gross_pay, total_deductions, net_pay FROM payroll WHERE employee_id = :employee_id AND period_start = :start_date AND period_end = :end_date LIMIT 1');
+                                        $summaryStmt->execute([
+                                            ':employee_id' => (int)$row['employee_id'],
+                                            ':start_date' => $startDate,
+                                            ':end_date' => $endDate,
+                                        ]);
+                                        $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+                                        $payroll_data = [
+                                            'gross_pay' => (float)($summary['gross_pay'] ?? 0),
+                                            'total_deductions' => (float)($summary['total_deductions'] ?? 0),
+                                            'net_pay' => (float)($summary['net_pay'] ?? 0),
+                                        ];
+                                    }
 									
                                     echo "<tr>";
                                     echo "<td class='employee-name'>" . htmlspecialchars($row['name']) . "</td>";
-									
-                                    // If no attendance, display all columns as ₱0.00 (and 0.00 for input)
-                                    if ($attendance_count == 0) {
-                                        for ($i = 0; $i < 10; $i++) {
+
+                                    // Earnings columns
+                                    if (!$calculator) {
+                                        // Unknown breakdown: show zeros except gross pay.
+                                        for ($i = 0; $i < 9; $i++) {
                                             echo "<td class='amount-cell'>₱0.00</td>";
                                         }
+                                        echo "<td class='amount-cell gross-pay'>₱" . number_format($payroll_data['gross_pay'] ?? 0, 2) . "</td>";
+
+                                        // Deductions columns (unknown breakdown: show zeros except cash advance + total deductions)
                                         for ($i = 0; $i < 7; $i++) {
                                             echo "<td class='amount-cell'>₱0.00</td>";
                                         }
-                                        echo "<td><input type='number' class='form-control cash-advance-input' data-employee-id='" . $row['employee_id'] . "' value='" . number_format($saved_cash_advance, 2, '.', '') . "' min='0' max='1000' step='0.01'></td>";
-                                        if (!empty($payroll_data['cash_bond_limit_reached']) && $payroll_data['cash_bond_limit_reached']) {
-                                            echo "<td class='amount-cell'>₱0.00 <span class='badge bg-success'>Limit Reached</span></td>";
-                                        } else {
-                                            echo "<td class='amount-cell'>₱0.00</td>";
-                                        }
+                                        echo "<td><input type='number' class='form-control cash-advance-input' data-employee-id='" . (int)$row['employee_id'] . "' value='" . number_format($saved_cash_advance, 2, '.', '') . "' min='0' max='1000' step='0.01'></td>";
+                                        echo "<td class='amount-cell'>₱0.00</td>"; // Cash bond
                                         echo "<td class='amount-cell'>₱0.00</td>"; // Others
-                                        echo "<td class='amount-cell total-deductions'>₱0.00</td>";
-                                        echo "<td class='amount-cell net-pay'>₱0.00</td>";
-                                    } else if (empty($payroll_data['gross_pay']) || $payroll_data['gross_pay'] == 0 || empty($payroll_data['net_pay']) || $payroll_data['net_pay'] == 0) {
-                                        // If gross pay or net pay is empty or zero, display all columns as ₱0.00 (and 0.00 for input)
-                                        for ($i = 0; $i < 10; $i++) {
-                                            echo "<td class='amount-cell'>₱0.00</td>";
-                                        }
-                                        for ($i = 0; $i < 7; $i++) {
-                                            echo "<td class='amount-cell'>₱0.00</td>";
-                                        }
-                                        echo "<td><input type='number' class='form-control cash-advance-input' data-employee-id='" . $row['employee_id'] . "' value='" . number_format($saved_cash_advance, 2, '.', '') . "' min='0' max='1000' step='0.01'></td>";
-                                        if (!empty($payroll_data['cash_bond_limit_reached']) && $payroll_data['cash_bond_limit_reached']) {
-                                            echo "<td class='amount-cell'>₱0.00 <span class='badge bg-success'>Limit Reached</span></td>";
-                                        } else {
-                                            echo "<td class='amount-cell'>₱0.00</td>";
-                                        }
-                                        echo "<td class='amount-cell'>₱0.00</td>"; // Others
-                                        echo "<td class='amount-cell total-deductions'>₱0.00</td>";
-                                        echo "<td class='amount-cell net-pay'>₱0.00</td>";
+                                        echo "<td class='amount-cell total-deductions'>₱" . number_format($payroll_data['total_deductions'] ?? 0, 2) . "</td>";
+
+                                        echo "<td class='amount-cell net-pay fw-bold'>₱" . number_format($payroll_data['net_pay'] ?? 0, 2) . "</td>";
                                     } else {
                                         // Earnings columns
                                         echo "<td class='amount-cell'>₱" . number_format($payroll_data['regular_hours_pay'] ?? 0, 2) . "</td>";

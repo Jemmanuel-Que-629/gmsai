@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2026 at 10:11 AM
+-- Generation Time: May 10, 2026 at 12:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -177,7 +177,21 @@ INSERT INTO `holidays` (`holiday_id`, `holiday_date`, `holiday_name`, `holiday_t
 (17, '2026-12-08', 'Feast of the Immaculate Conception', 'special_non_working', 2, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
 (18, '2026-12-24', 'Christmas Eve', 'special_non_working', 2, 0, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
 (19, '2026-12-31', 'Last Day of the Year', 'special_non_working', 2, 0, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
-(20, '2026-02-25', 'EDSA People Power Revolution Anniversary', 'special_working', 3, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54');
+(20, '2026-02-25', 'EDSA People Power Revolution Anniversary', 'special_working', 3, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(21, '2027-01-01', 'New Year\'s Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(22, '2027-04-09', 'Araw ng Kagitingan', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(23, '2027-05-01', 'Labor Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(24, '2027-06-12', 'Independence Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(25, '2027-08-31', 'National Heroes Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(26, '2027-11-30', 'Bonifacio Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(27, '2027-12-25', 'Christmas Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(28, '2027-12-30', 'Rizal Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(29, '2027-08-21', 'Ninoy Aquino Day', 'special_non_working', 2, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(30, '2027-11-01', 'All Saints\' Day', 'special_non_working', 2, 0, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(31, '2027-12-08', 'Feast of the Immaculate Conception', 'special_non_working', 2, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(32, '2027-12-24', 'Christmas Eve', 'special_non_working', 2, 0, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(33, '2027-12-31', 'Last Day of the Year', 'special_non_working', 2, 0, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(34, '2027-02-25', 'EDSA People Power Revolution Anniversary', 'special_working', 3, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14');
 
 -- --------------------------------------------------------
 
@@ -640,7 +654,7 @@ ALTER TABLE `employees`
 -- AUTO_INCREMENT for table `holidays`
 --
 ALTER TABLE `holidays`
-  MODIFY `holiday_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `holiday_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `location_rate`
