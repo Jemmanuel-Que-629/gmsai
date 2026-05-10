@@ -78,3 +78,5 @@ Stack trace:
 [03-May-2026 18:48:22 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
 [03-May-2026 18:48:31 Asia/Manila] PHP Warning:  Undefined variable $isLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 130
 [03-May-2026 18:51:11 Asia/Manila] PHP Warning:  Undefined variable $isAccountingLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 50
+[10-May-2026 16:37:53 Asia/Manila] PHP Warning:  include(../../global/footer.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\practice\system_users\accounting\calendar.php on line 231
+[10-May-2026 16:37:53 Asia/Manila] PHP Warning:  include(): Failed opening '../../global/footer.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\practice\system_users\accounting\calendar.php on line 231

@@ -25,6 +25,7 @@ $philhealthContributionPath = DOMAIN_PATH . '/system_users/accounting/philhealth
 $pagibigContributionPath = DOMAIN_PATH . '/system_users/accounting/pagibig_contribution.php';
 $dailyTimeRecordPath = DOMAIN_PATH . '/system_users/accounting/daily_time_record.php';
 $employeesPath = DOMAIN_PATH . '/system_users/accounting/employees.php';
+$calendarPath = DOMAIN_PATH . '/system_users/accounting/calendar.php';
 
 $payrollTableUrl = file_exists($payrollTablePath) ? (BASE_URL . 'system_users/accounting/payroll_table.php') : '';
 $sssContributionUrl = file_exists($sssContributionPath) ? (BASE_URL . 'system_users/accounting/sss_contribution.php') : '';
@@ -33,6 +34,7 @@ $philhealthContributionUrl = file_exists($philhealthContributionPath) ? (BASE_UR
 $pagibigContributionUrl = file_exists($pagibigContributionPath) ? (BASE_URL . 'system_users/accounting/pagibig_contribution.php') : '';
 $dailyTimeRecordUrl = file_exists($dailyTimeRecordPath) ? (BASE_URL . 'system_users/accounting/daily_time_record.php') : '';
 $employeesUrl = file_exists($employeesPath) ? (BASE_URL . 'system_users/accounting/employees.php') : '';
+$calendarUrl = file_exists($calendarPath) ? (BASE_URL . 'system_users/accounting/calendar.php') : '';
 
 $logoUrl = defined('LOGO_URL') ? LOGO_URL : (BASE_URL . 'images/logo.jpg');
 
@@ -55,6 +57,7 @@ $isContributionSectionActive = $isSssBracketActive || $isPhilhealthContributionA
 
 $isDailyTimeRecordActive = str_ends_with($currentPath, '/system_users/accounting/daily_time_record.php');
 $isEmployeesActive = str_ends_with($currentPath, '/system_users/accounting/employees.php');
+$isCalendarActive = str_ends_with($currentPath, '/system_users/accounting/calendar.php');
 
 $isDashboardActive = ($userRole === 'HR' && $isHrDashboardActive) || ($userRole === 'ACCOUNTING' && $isAccountingDashboardActive);
 $isLogsActive = ($userRole === 'HR' && $isHrLogsActive) || ($userRole === 'ACCOUNTING' && $isAccountingLogsActive);
@@ -292,6 +295,22 @@ $isLogsActive = ($userRole === 'HR' && $isHrLogsActive) || ($userRole === 'ACCOU
 					<span class="nav-left">
 						<span class="material-symbols-outlined nav-icon">badge</span>
 						<span>Employees</span>
+					</span>
+				</a>
+			<?php endif; ?>
+
+			<?php if ($calendarUrl): ?>
+				<a href="<?php echo htmlspecialchars($calendarUrl, ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo $isCalendarActive ? 'is-active' : ''; ?>">
+					<span class="nav-left">
+						<span class="material-symbols-outlined nav-icon">calendar_month</span>
+						<span>Calendar</span>
+					</span>
+				</a>
+			<?php else: ?>
+				<a href="#" onclick="return false;" aria-disabled="true" style="opacity:.75;">
+					<span class="nav-left">
+						<span class="material-symbols-outlined nav-icon">calendar_month</span>
+						<span>Calendar</span>
 					</span>
 				</a>
 			<?php endif; ?>
