@@ -66,7 +66,7 @@ CREATE TABLE location_rate (
 🔵 5. EMPLOYEES (FIXED)
 CREATE TABLE employees (
   employee_id INT AUTO_INCREMENT PRIMARY KEY,
-  employee_num_id	varchar(50),
+  employee_num_id	varchar(50) NOT NULL UNIQUE,
   user_id INT NULL,
   first_name VARCHAR(100) NOT NULL,
   middle_name VARCHAR(100),

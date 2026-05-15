@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $pageTitle = 'SSS Bracket Table';
-require_once __DIR__ . '/../../global/header.php';
+require_once __DIR__ . '/../../template/header.php';
 require_once __DIR__ . '/../../config/db_connection.php';
 
 $effectiveFrom = null;
@@ -118,7 +118,7 @@ try {
 </style>
 
 <div class="d-flex" id="wrapper">
-	<?php include __DIR__ . '/../../global/sidebar.php'; ?>
+	<?php include __DIR__ . '/../../template/sidebar.php'; ?>
 
 	<div id="page-content-wrapper" class="w-100">
 		<div class="container-fluid px-4 py-4">

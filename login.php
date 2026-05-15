@@ -263,7 +263,7 @@ if (isset($_SESSION['flash_toast']) && is_array($_SESSION['flash_toast'])) {
                         <p class="text-muted">Please enter your credentials</p>
                     </div>
 
-                    <form action="backend/users/unified_users_process.php" method="POST" id="loginForm" novalidate>
+                    <form action="controller/users/login_process.php" method="POST" id="loginForm" novalidate>
                         <input type="hidden" name="action" value="login">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="input-group-custom">

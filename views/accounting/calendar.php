@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $pageTitle = 'Holiday Calendar';
-include '../../global/header.php';
+include '../../template/header.php';
 
 require_once '../../middleware/csrf.php';
 csrf_init();
@@ -85,7 +85,7 @@ $defaultMonth = (int)date('n');
 </style>
 
 <div class="d-flex" id="wrapper">
-	<?php include '../../global/sidebar.php'; ?>
+	<?php include '../../template/sidebar.php'; ?>
 
 	<div id="page-content-wrapper" class="w-100">
 		<div class="container-fluid px-4 py-4">

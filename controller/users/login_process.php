@@ -176,8 +176,8 @@ function handleLogin(PDO $conn): never
 
 		$role = (string)($_SESSION['user_role'] ?? '');
 		$redirectMap = [
-			'HR' => BASE_URL . 'system_users/hr/dashboard.php',
-			'ACCOUNTING' => BASE_URL . 'system_users/accounting/dashboard.php',
+			'HR' => BASE_URL . 'views/hr/dashboard.php',
+			'ACCOUNTING' => BASE_URL . 'views/accounting/dashboard.php',
 		];
 
 		if (!isset($redirectMap[$role])) {

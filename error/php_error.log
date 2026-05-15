@@ -80,3 +80,5 @@ Stack trace:
 [03-May-2026 18:51:11 Asia/Manila] PHP Warning:  Undefined variable $isAccountingLogsActive in C:\xampp\htdocs\practice\global\sidebar.php on line 50
 [10-May-2026 16:37:53 Asia/Manila] PHP Warning:  include(../../global/footer.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\practice\system_users\accounting\calendar.php on line 231
 [10-May-2026 16:37:53 Asia/Manila] PHP Warning:  include(): Failed opening '../../global/footer.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\practice\system_users\accounting\calendar.php on line 231
+[15-May-2026 15:06:30 Asia/Manila] PHP Warning:  include(C:\xampp\htdocs\practice\views\accounting/../../global/sidebar.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\practice\views\accounting\daily_time_record.php on line 283
+[15-May-2026 15:06:30 Asia/Manila] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\practice\views\accounting/../../global/sidebar.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\practice\views\accounting\daily_time_record.php on line 283

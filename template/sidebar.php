@@ -9,55 +9,55 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $userRole = $_SESSION['user_role'] ?? '';
 
-$hrDashboardUrl = BASE_URL . 'system_users/hr/dashboard.php';
-$accountingDashboardUrl = BASE_URL . 'system_users/accounting/dashboard.php';
-$hrLogsUrl = BASE_URL . 'system_users/hr/activity_logs.php';
-$accountingLogsUrl = BASE_URL . 'system_users/accounting/activity_logs.php';
+$hrDashboardUrl = BASE_URL . 'views/hr/dashboard.php';
+$accountingDashboardUrl = BASE_URL . 'views/accounting/dashboard.php';
+$hrLogsUrl = BASE_URL . 'views/hr/activity_logs.php';
+$accountingLogsUrl = BASE_URL . 'views/accounting/activity_logs.php';
 
 $dashboardUrl = $userRole === 'ACCOUNTING' ? $accountingDashboardUrl : $hrDashboardUrl;
 $logsUrl = $userRole === 'ACCOUNTING' ? $accountingLogsUrl : $hrLogsUrl;
 
 // Optional pages (only link if they exist)
-$payrollTablePath = DOMAIN_PATH . '/system_users/accounting/payroll_table.php';
-$sssContributionPath = DOMAIN_PATH . '/system_users/accounting/sss_contribution.php';
-$sssBracketPath = DOMAIN_PATH . '/system_users/accounting/sss_bracket_table.php';
-$philhealthContributionPath = DOMAIN_PATH . '/system_users/accounting/philhealth_contribution.php';
-$pagibigContributionPath = DOMAIN_PATH . '/system_users/accounting/pagibig_contribution.php';
-$dailyTimeRecordPath = DOMAIN_PATH . '/system_users/accounting/daily_time_record.php';
-$employeesPath = DOMAIN_PATH . '/system_users/accounting/employees.php';
-$calendarPath = DOMAIN_PATH . '/system_users/accounting/calendar.php';
+$payrollTablePath = DOMAIN_PATH . '/views/accounting/payroll_table.php';
+$sssContributionPath = DOMAIN_PATH . '/views/accounting/sss_contribution.php';
+$sssBracketPath = DOMAIN_PATH . '/views/accounting/sss_bracket_table.php';
+$philhealthContributionPath = DOMAIN_PATH . '/views/accounting/philhealth_contribution.php';
+$pagibigContributionPath = DOMAIN_PATH . '/views/accounting/pagibig_contribution.php';
+$dailyTimeRecordPath = DOMAIN_PATH . '/views/accounting/daily_time_record.php';
+$employeesPath = DOMAIN_PATH . '/views/accounting/employees.php';
+$calendarPath = DOMAIN_PATH . '/views/accounting/calendar.php';
 
-$payrollTableUrl = file_exists($payrollTablePath) ? (BASE_URL . 'system_users/accounting/payroll_table.php') : '';
-$sssContributionUrl = file_exists($sssContributionPath) ? (BASE_URL . 'system_users/accounting/sss_contribution.php') : '';
-$sssBracketUrl = file_exists($sssBracketPath) ? (BASE_URL . 'system_users/accounting/sss_bracket_table.php') : '';
-$philhealthContributionUrl = file_exists($philhealthContributionPath) ? (BASE_URL . 'system_users/accounting/philhealth_contribution.php') : '';
-$pagibigContributionUrl = file_exists($pagibigContributionPath) ? (BASE_URL . 'system_users/accounting/pagibig_contribution.php') : '';
-$dailyTimeRecordUrl = file_exists($dailyTimeRecordPath) ? (BASE_URL . 'system_users/accounting/daily_time_record.php') : '';
-$employeesUrl = file_exists($employeesPath) ? (BASE_URL . 'system_users/accounting/employees.php') : '';
-$calendarUrl = file_exists($calendarPath) ? (BASE_URL . 'system_users/accounting/calendar.php') : '';
+$payrollTableUrl = file_exists($payrollTablePath) ? (BASE_URL . 'views/accounting/payroll_table.php') : '';
+$sssContributionUrl = file_exists($sssContributionPath) ? (BASE_URL . 'views/accounting/sss_contribution.php') : '';
+$sssBracketUrl = file_exists($sssBracketPath) ? (BASE_URL . 'views/accounting/sss_bracket_table.php') : '';
+$philhealthContributionUrl = file_exists($philhealthContributionPath) ? (BASE_URL . 'views/accounting/philhealth_contribution.php') : '';
+$pagibigContributionUrl = file_exists($pagibigContributionPath) ? (BASE_URL . 'views/accounting/pagibig_contribution.php') : '';
+$dailyTimeRecordUrl = file_exists($dailyTimeRecordPath) ? (BASE_URL . 'views/accounting/daily_time_record.php') : '';
+$employeesUrl = file_exists($employeesPath) ? (BASE_URL . 'views/accounting/employees.php') : '';
+$calendarUrl = file_exists($calendarPath) ? (BASE_URL . 'views/accounting/calendar.php') : '';
 
 $logoUrl = defined('LOGO_URL') ? LOGO_URL : (BASE_URL . 'images/logo.jpg');
 
 $currentPath = str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '');
 
-$isHrDashboardActive = str_ends_with($currentPath, '/system_users/hr/dashboard.php');
-$isAccountingDashboardActive = str_ends_with($currentPath, '/system_users/accounting/dashboard.php');
+$isHrDashboardActive = str_ends_with($currentPath, '/views/hr/dashboard.php');
+$isAccountingDashboardActive = str_ends_with($currentPath, '/views/accounting/dashboard.php');
 
-$isHrLogsActive = str_ends_with($currentPath, '/system_users/hr/activity_logs.php');
-$isAccountingLogsActive = str_ends_with($currentPath, '/system_users/accounting/activity_logs.php');
+$isHrLogsActive = str_ends_with($currentPath, '/views/hr/activity_logs.php');
+$isAccountingLogsActive = str_ends_with($currentPath, '/views/accounting/activity_logs.php');
 
-$isPayrollTableActive = str_ends_with($currentPath, '/system_users/accounting/payroll_table.php');
-$isSssContributionActive = str_ends_with($currentPath, '/system_users/accounting/sss_contribution.php');
+$isPayrollTableActive = str_ends_with($currentPath, '/views/accounting/payroll_table.php');
+$isSssContributionActive = str_ends_with($currentPath, '/views/accounting/sss_contribution.php');
 $isPayrollSectionActive = $isPayrollTableActive || $isSssContributionActive;
 
-$isSssBracketActive = str_ends_with($currentPath, '/system_users/accounting/sss_bracket_table.php');
-$isPhilhealthContributionActive = str_ends_with($currentPath, '/system_users/accounting/philhealth_contribution.php');
-$isPagibigContributionActive = str_ends_with($currentPath, '/system_users/accounting/pagibig_contribution.php');
+$isSssBracketActive = str_ends_with($currentPath, '/views/accounting/sss_bracket_table.php');
+$isPhilhealthContributionActive = str_ends_with($currentPath, '/views/accounting/philhealth_contribution.php');
+$isPagibigContributionActive = str_ends_with($currentPath, '/views/accounting/pagibig_contribution.php');
 $isContributionSectionActive = $isSssBracketActive || $isPhilhealthContributionActive || $isPagibigContributionActive;
 
-$isDailyTimeRecordActive = str_ends_with($currentPath, '/system_users/accounting/daily_time_record.php');
-$isEmployeesActive = str_ends_with($currentPath, '/system_users/accounting/employees.php');
-$isCalendarActive = str_ends_with($currentPath, '/system_users/accounting/calendar.php');
+$isDailyTimeRecordActive = str_ends_with($currentPath, '/views/accounting/daily_time_record.php');
+$isEmployeesActive = str_ends_with($currentPath, '/views/accounting/employees.php');
+$isCalendarActive = str_ends_with($currentPath, '/views/accounting/calendar.php');
 
 $isDashboardActive = ($userRole === 'HR' && $isHrDashboardActive) || ($userRole === 'ACCOUNTING' && $isAccountingDashboardActive);
 $isLogsActive = ($userRole === 'HR' && $isHrLogsActive) || ($userRole === 'ACCOUNTING' && $isAccountingLogsActive);
