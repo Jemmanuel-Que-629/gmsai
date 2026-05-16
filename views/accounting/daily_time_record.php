@@ -2,8 +2,9 @@
 declare(strict_types=1);
 
 $pageTitle = 'Daily Time Record';
+require_once __DIR__ . '/../../middleware/auth_checker.php';
+checkAccess('ACCOUNTING');
 require_once __DIR__ . '/../../template/header.php';
-
 require_once __DIR__ . '/../../controller/dtr_controller.php';
 ?>
 

@@ -2,83 +2,12 @@
 declare(strict_types=1);
 
 $pageTitle = 'Employees';
+
+require_once __DIR__ . '/../../middleware/auth_checker.php';
+checkAccess('ACCOUNTING');
+
 require_once __DIR__ . '/../../template/header.php';
-require_once __DIR__ . '/../../config/db_connection.php';
-
-require_once __DIR__ . '/../../middleware/csrf.php';
-csrf_init();
-
-// Detect optional archive column (migration may not yet be applied)
-$hasArchiveCol = false;
-try {
-	$colStmt = $conn->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'employees' AND COLUMN_NAME = 'is_archived'");
-	$hasArchiveCol = ((int)$colStmt->fetchColumn() > 0);
-} catch (Throwable $e) {
-	$hasArchiveCol = false;
-}
-
-// Locations for edit dropdown
-$locStmt = $conn->prepare('SELECT location_id, location_name FROM location_rate ORDER BY location_name ASC');
-$locStmt->execute();
-$locations = $locStmt->fetchAll(PDO::FETCH_ASSOC);
-$locationsJson = json_encode($locations, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-if (!is_string($locationsJson)) {
-	$locationsJson = '[]';
-}
-
-// Fetch employees (no user input used -> safe). Use prepared statements anyway.
-$stmt = $conn->prepare(
-	"SELECT 
-		e.employee_num_id,
-		e.user_id,
-		e.first_name,
-		e.middle_name,
-		e.last_name,
-		e.position,
-		e.department,
-		e.location_id,
-		e.salary_type,
-		" . ($hasArchiveCol ? "e.is_archived" : "0 AS is_archived") . ",
-		lr.location_name,
-		e.created_at,
-		e.updated_at
-	 FROM employees e
-	 JOIN location_rate lr ON e.location_id = lr.location_id
-	 ORDER BY e.last_name ASC, e.first_name ASC"
-);
-$stmt->execute();
-$employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Add computed display fields (done server-side so the table is clean)
-foreach ($employees as &$row) {
-	$first = trim((string)($row['first_name'] ?? ''));
-	$middle = trim((string)($row['middle_name'] ?? ''));
-	$last = trim((string)($row['last_name'] ?? ''));
-
-	$mi = '';
-	if ($middle !== '') {
-		$mi = strtoupper(substr($middle, 0, 1)) . '.';
-	}
-
-	$row['full_name'] = trim($first . ' ' . ($mi !== '' ? $mi . ' ' : '') . $last);
-
-	// Normalize nulls for frontend
-	foreach (['department', 'position', 'location_name', 'salary_type'] as $k) {
-		if (!isset($row[$k]) || $row[$k] === null) {
-			$row[$k] = '';
-		}
-	}
-	$row['is_archived'] = (int)($row['is_archived'] ?? 0);
-}
-unset($row);
-
-$employeesJson = json_encode($employees, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-if (!is_string($employeesJson)) {
-	$employeesJson = '[]';
-}
-
-$csrfToken = csrf_token();
-$employeeBackendUrl = BASE_URL . 'backend/employees/unified_employee_process.php';
+require_once __DIR__ . '/../../controller/employee_controller.php';
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">

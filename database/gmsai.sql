@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2026 at 01:38 PM
+-- Generation Time: May 16, 2026 at 09:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,6 +49,113 @@ CREATE TABLE `attendance` (
   `time_out` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`attendance_id`, `employee_id`, `work_date`, `time_in`, `time_out`) VALUES
+(1, 1, '2026-05-06', '08:00:00', '17:00:00'),
+(2, 2, '2026-05-06', '08:10:00', '17:00:00'),
+(3, 3, '2026-05-06', '07:58:00', NULL),
+(4, 4, '2026-05-06', '08:05:00', '17:00:00'),
+(5, 5, '2026-05-06', '08:00:00', '16:00:00'),
+(6, 6, '2026-05-06', NULL, NULL),
+(7, 7, '2026-05-06', '08:00:00', '17:00:00'),
+(8, 8, '2026-05-06', '08:00:00', '17:00:00'),
+(9, 9, '2026-05-06', '09:00:00', '18:00:00'),
+(10, 10, '2026-05-06', '08:00:00', '17:00:00'),
+(11, 1, '2026-05-07', '08:00:00', '17:00:00'),
+(12, 2, '2026-05-07', '08:00:00', '17:00:00'),
+(13, 3, '2026-05-07', '08:00:00', '17:00:00'),
+(14, 4, '2026-05-07', '08:00:00', '07:00:00'),
+(15, 5, '2026-05-07', '08:00:00', '17:00:00'),
+(16, 6, '2026-05-07', '08:00:00', NULL),
+(17, 7, '2026-05-07', '08:20:00', '17:00:00'),
+(18, 8, '2026-05-07', '08:00:00', '17:00:00'),
+(19, 9, '2026-05-07', '08:00:00', '17:00:00'),
+(20, 10, '2026-05-07', '08:00:00', '17:00:00'),
+(21, 1, '2026-05-08', '08:00:00', '17:00:00'),
+(22, 2, '2026-05-08', '08:00:00', '17:00:00'),
+(23, 3, '2026-05-08', '08:00:00', '17:00:00'),
+(24, 4, '2026-05-08', '08:00:00', '17:00:00'),
+(25, 5, '2026-05-08', '08:00:00', '17:00:00'),
+(26, 6, '2026-05-08', '08:00:00', '17:00:00'),
+(27, 7, '2026-05-08', '08:00:00', '17:00:00'),
+(28, 8, '2026-05-08', NULL, NULL),
+(29, 9, '2026-05-08', '08:00:00', '17:00:00'),
+(30, 10, '2026-05-08', '08:00:00', '17:00:00'),
+(31, 1, '2026-05-09', '08:00:00', '17:00:00'),
+(32, 2, '2026-05-09', '08:00:00', '17:00:00'),
+(33, 3, '2026-05-09', '08:00:00', NULL),
+(34, 4, '2026-05-09', '08:00:00', '17:00:00'),
+(35, 5, '2026-05-09', '08:00:00', '17:00:00'),
+(36, 6, '2026-05-09', '08:00:00', '17:00:00'),
+(37, 7, '2026-05-09', '08:00:00', '17:00:00'),
+(38, 8, '2026-05-09', '08:00:00', '17:00:00'),
+(39, 9, '2026-05-09', '08:00:00', '17:00:00'),
+(40, 10, '2026-05-09', '08:00:00', '17:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cash_advances`
+--
+
+CREATE TABLE `cash_advances` (
+  `cash_advance_id` int(11) NOT NULL,
+  `employee_id` int(11) NOT NULL,
+  `period_year` smallint(6) NOT NULL,
+  `period_month` tinyint(4) NOT NULL,
+  `cutoff` tinyint(4) NOT NULL,
+  `amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  CHECK (`period_month` BETWEEN 1 AND 12),
+  CHECK (`cutoff` IN (1,2)),
+  CHECK (`amount` BETWEEN 0.00 AND 1000.00)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cash_bond_accounts`
+--
+
+CREATE TABLE `cash_bond_accounts` (
+  `employee_id` int(11) NOT NULL,
+  `target_amount` decimal(10,2) NOT NULL DEFAULT 10000.00,
+  `per_cutoff_amount` decimal(10,2) NOT NULL DEFAULT 100.00,
+  `total_paid` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  CHECK (`target_amount` >= 0.00),
+  CHECK (`per_cutoff_amount` >= 0.00),
+  CHECK (`total_paid` >= 0.00)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cash_bond_payments`
+--
+
+CREATE TABLE `cash_bond_payments` (
+  `cash_bond_payment_id` int(11) NOT NULL,
+  `employee_id` int(11) NOT NULL,
+  `period_year` smallint(6) NOT NULL,
+  `period_month` tinyint(4) NOT NULL,
+  `cutoff` tinyint(4) NOT NULL,
+  `amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `payroll_id` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  CHECK (`period_month` BETWEEN 1 AND 12),
+  CHECK (`cutoff` IN (1,2)),
+  CHECK (`amount` >= 0.00)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -91,6 +198,26 @@ INSERT INTO `employees` (`employee_id`, `employee_num_id`, `user_id`, `first_nam
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `employee_work_schedule`
+--
+
+CREATE TABLE `employee_work_schedule` (
+  `schedule_id` int(11) NOT NULL,
+  `employee_id` int(11) NOT NULL,
+  `day_of_week` tinyint(4) NOT NULL COMMENT '1=Mon..7=Sun',
+  `start_time` time DEFAULT NULL,
+  `end_time` time DEFAULT NULL,
+  `break_minutes` int(11) NOT NULL DEFAULT 0,
+  `is_rest_day` tinyint(1) NOT NULL DEFAULT 0,
+  `effective_from` date NOT NULL,
+  `effective_to` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `holidays`
 --
 
@@ -98,10 +225,54 @@ CREATE TABLE `holidays` (
   `holiday_id` int(11) NOT NULL,
   `holiday_date` date NOT NULL,
   `holiday_name` varchar(100) NOT NULL,
-  `holiday_type` enum('regular','special','company') NOT NULL,
+  `holiday_type` enum('regular','special_non_working','special_working','company') NOT NULL,
+  `payroll_rate_id` int(11) DEFAULT NULL,
+  `is_paid` tinyint(1) DEFAULT 1,
   `is_recurring` tinyint(1) DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `applicable_year` year(4) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `holidays`
+--
+
+INSERT INTO `holidays` (`holiday_id`, `holiday_date`, `holiday_name`, `holiday_type`, `payroll_rate_id`, `is_paid`, `is_recurring`, `applicable_year`, `created_at`, `updated_at`) VALUES
+(1, '2026-01-01', 'New Year\'s Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(2, '2026-03-20', 'Eid\'l Fitr', 'regular', 1, 1, 0, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(3, '2026-04-02', 'Maundy Thursday', 'regular', 1, 1, 0, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(4, '2026-04-03', 'Good Friday', 'regular', 1, 1, 0, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(5, '2026-04-09', 'Araw ng Kagitingan', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(6, '2026-05-01', 'Labor Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(7, '2026-06-12', 'Independence Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(8, '2026-08-31', 'National Heroes Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(9, '2026-11-30', 'Bonifacio Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(10, '2026-12-25', 'Christmas Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(11, '2026-12-30', 'Rizal Day', 'regular', 1, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(12, '2026-02-17', 'Chinese New Year', 'special_non_working', 2, 0, 0, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(13, '2026-04-04', 'Black Saturday', 'special_non_working', 2, 0, 0, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(14, '2026-08-21', 'Ninoy Aquino Day', 'special_non_working', 2, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(15, '2026-11-01', 'All Saints\' Day', 'special_non_working', 2, 0, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(16, '2026-11-02', 'All Souls\' Day', 'special_non_working', 2, 0, 0, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(17, '2026-12-08', 'Feast of the Immaculate Conception', 'special_non_working', 2, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(18, '2026-12-24', 'Christmas Eve', 'special_non_working', 2, 0, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(19, '2026-12-31', 'Last Day of the Year', 'special_non_working', 2, 0, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(20, '2026-02-25', 'EDSA People Power Revolution Anniversary', 'special_working', 3, 1, 1, '2026', '2026-05-10 07:51:54', '2026-05-10 07:51:54'),
+(21, '2027-01-01', 'New Year\'s Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(22, '2027-04-09', 'Araw ng Kagitingan', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(23, '2027-05-01', 'Labor Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(24, '2027-06-12', 'Independence Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(25, '2027-08-31', 'National Heroes Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(26, '2027-11-30', 'Bonifacio Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(27, '2027-12-25', 'Christmas Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(28, '2027-12-30', 'Rizal Day', 'regular', 1, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(29, '2027-08-21', 'Ninoy Aquino Day', 'special_non_working', 2, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(30, '2027-11-01', 'All Saints\' Day', 'special_non_working', 2, 0, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(31, '2027-12-08', 'Feast of the Immaculate Conception', 'special_non_working', 2, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(32, '2027-12-24', 'Christmas Eve', 'special_non_working', 2, 0, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(33, '2027-12-31', 'Last Day of the Year', 'special_non_working', 2, 0, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14'),
+(34, '2027-02-25', 'EDSA People Power Revolution Anniversary', 'special_working', 3, 1, 1, '2027', '2026-05-10 09:14:14', '2026-05-10 09:14:14');
 
 -- --------------------------------------------------------
 
@@ -160,7 +331,10 @@ INSERT INTO `login_logs` (`log_id`, `user_id`, `login_time`, `logout_time`, `ip_
 (5, 1, '2026-05-03 15:53:14', '2026-05-03 15:54:41', '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
 (6, 2, '2026-05-03 15:54:46', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
 (7, 2, '2026-05-09 16:55:42', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
-(8, 2, '2026-05-09 17:43:33', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36');
+(8, 2, '2026-05-09 17:43:33', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'),
+(9, 2, '2026-05-15 14:51:36', NULL, '::1', 'Edge', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0'),
+(10, 2, '2026-05-15 14:52:07', NULL, '::1', 'Edge', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0'),
+(11, 2, '2026-05-16 15:02:08', NULL, '::1', 'Chrome', 'Windows', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36');
 
 -- --------------------------------------------------------
 
@@ -246,10 +420,28 @@ CREATE TABLE `payroll_details` (
 
 CREATE TABLE `payroll_rates` (
   `rate_id` int(11) NOT NULL,
-  `type` varchar(50) NOT NULL,
-  `rate_multiplier` decimal(5,2) NOT NULL,
+  `rate_code` varchar(50) NOT NULL,
+  `rate_name` varchar(100) NOT NULL,
+  `worked_multiplier` decimal(5,2) NOT NULL,
+  `unworked_multiplier` decimal(5,2) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `effective_from` date NOT NULL,
+  `effective_to` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payroll_rates`
+--
+
+INSERT INTO `payroll_rates` (`rate_id`, `rate_code`, `rate_name`, `worked_multiplier`, `unworked_multiplier`, `is_active`, `effective_from`, `effective_to`, `created_at`) VALUES
+(1, 'REGULAR_HOLIDAY', 'Regular Holiday', 2.00, 1.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11'),
+(2, 'SPECIAL_NON_WORKING', 'Special Non-Working Holiday', 1.30, 0.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11'),
+(3, 'SPECIAL_WORKING', 'Special Working Holiday', 1.00, 1.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11'),
+(4, 'COMPANY_HOLIDAY', 'Company Holiday', 1.00, 1.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11'),
+(5, 'NIGHT_DIFF', 'Night Differential', 1.10, 1.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11'),
+(6, 'OVERTIME', 'Overtime', 1.25, 1.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11'),
+(7, 'REST_DAY', 'Rest Day', 1.30, 0.00, 1, '2026-01-01', NULL, '2026-05-10 07:51:11');
 
 -- --------------------------------------------------------
 
@@ -431,6 +623,29 @@ ALTER TABLE `attendance`
   ADD KEY `employee_id` (`employee_id`);
 
 --
+-- Indexes for table `cash_advances`
+--
+ALTER TABLE `cash_advances`
+  ADD PRIMARY KEY (`cash_advance_id`),
+  ADD UNIQUE KEY `uniq_cash_adv_emp_period` (`employee_id`,`period_year`,`period_month`,`cutoff`),
+  ADD KEY `fk_cash_adv_created_by` (`created_by`);
+
+--
+-- Indexes for table `cash_bond_accounts`
+--
+ALTER TABLE `cash_bond_accounts`
+  ADD PRIMARY KEY (`employee_id`);
+
+--
+-- Indexes for table `cash_bond_payments`
+--
+ALTER TABLE `cash_bond_payments`
+  ADD PRIMARY KEY (`cash_bond_payment_id`),
+  ADD UNIQUE KEY `uniq_cash_bond_emp_period` (`employee_id`,`period_year`,`period_month`,`cutoff`),
+  ADD KEY `fk_cash_bond_pay_payroll` (`payroll_id`),
+  ADD KEY `fk_cash_bond_pay_created_by` (`created_by`);
+
+--
 -- Indexes for table `employees`
 --
 ALTER TABLE `employees`
@@ -439,10 +654,20 @@ ALTER TABLE `employees`
   ADD KEY `location_id` (`location_id`);
 
 --
+-- Indexes for table `employee_work_schedule`
+--
+ALTER TABLE `employee_work_schedule`
+  ADD PRIMARY KEY (`schedule_id`),
+  ADD UNIQUE KEY `uniq_emp_day_from` (`employee_id`,`day_of_week`,`effective_from`),
+  ADD KEY `idx_emp_effective` (`employee_id`,`effective_from`,`effective_to`);
+
+--
 -- Indexes for table `holidays`
 --
 ALTER TABLE `holidays`
-  ADD PRIMARY KEY (`holiday_id`);
+  ADD PRIMARY KEY (`holiday_id`),
+  ADD UNIQUE KEY `uq_holiday_date_name_year` (`holiday_date`,`holiday_name`,`applicable_year`),
+  ADD KEY `fk_holiday_payroll_rate` (`payroll_rate_id`);
 
 --
 -- Indexes for table `location_rate`
@@ -468,7 +693,7 @@ ALTER TABLE `pagibig_contribution`
 --
 ALTER TABLE `payroll`
   ADD PRIMARY KEY (`payroll_id`),
-  ADD KEY `employee_id` (`employee_id`),
+  ADD UNIQUE KEY `uniq_employee_period` (`employee_id`,`period_start`,`period_end`),
   ADD KEY `created_by` (`created_by`);
 
 --
@@ -489,7 +714,8 @@ ALTER TABLE `payroll_details`
 -- Indexes for table `payroll_rates`
 --
 ALTER TABLE `payroll_rates`
-  ADD PRIMARY KEY (`rate_id`);
+  ADD PRIMARY KEY (`rate_id`),
+  ADD UNIQUE KEY `rate_code` (`rate_code`);
 
 --
 -- Indexes for table `philhealth_contribution`
@@ -531,7 +757,19 @@ ALTER TABLE `activity_logs`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `cash_advances`
+--
+ALTER TABLE `cash_advances`
+  MODIFY `cash_advance_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `cash_bond_payments`
+--
+ALTER TABLE `cash_bond_payments`
+  MODIFY `cash_bond_payment_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -540,10 +778,16 @@ ALTER TABLE `employees`
   MODIFY `employee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT for table `employee_work_schedule`
+--
+ALTER TABLE `employee_work_schedule`
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `holidays`
 --
 ALTER TABLE `holidays`
-  MODIFY `holiday_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `holiday_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `location_rate`
@@ -555,7 +799,7 @@ ALTER TABLE `location_rate`
 -- AUTO_INCREMENT for table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pagibig_contribution`
@@ -585,7 +829,7 @@ ALTER TABLE `payroll_details`
 -- AUTO_INCREMENT for table `payroll_rates`
 --
 ALTER TABLE `payroll_rates`
-  MODIFY `rate_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `rate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `philhealth_contribution`
@@ -628,11 +872,44 @@ ALTER TABLE `attendance`
   ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `cash_advances`
+--
+ALTER TABLE `cash_advances`
+  ADD CONSTRAINT `fk_cash_adv_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_cash_adv_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `cash_bond_accounts`
+--
+ALTER TABLE `cash_bond_accounts`
+  ADD CONSTRAINT `fk_cash_bond_account_emp` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `cash_bond_payments`
+--
+ALTER TABLE `cash_bond_payments`
+  ADD CONSTRAINT `fk_cash_bond_pay_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_cash_bond_pay_emp` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_cash_bond_pay_payroll` FOREIGN KEY (`payroll_id`) REFERENCES `payroll` (`payroll_id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `employees`
 --
 ALTER TABLE `employees`
   ADD CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
   ADD CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `location_rate` (`location_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `employee_work_schedule`
+--
+ALTER TABLE `employee_work_schedule`
+  ADD CONSTRAINT `fk_sched_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `holidays`
+--
+ALTER TABLE `holidays`
+  ADD CONSTRAINT `fk_holiday_payroll_rate` FOREIGN KEY (`payroll_rate_id`) REFERENCES `payroll_rates` (`rate_id`);
 
 --
 -- Constraints for table `login_logs`

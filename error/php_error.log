@@ -82,3 +82,36 @@ Stack trace:
 [10-May-2026 16:37:53 Asia/Manila] PHP Warning:  include(): Failed opening '../../global/footer.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\practice\system_users\accounting\calendar.php on line 231
 [15-May-2026 15:06:30 Asia/Manila] PHP Warning:  include(C:\xampp\htdocs\practice\views\accounting/../../global/sidebar.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\practice\views\accounting\daily_time_record.php on line 283
 [15-May-2026 15:06:30 Asia/Manila] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\practice\views\accounting/../../global/sidebar.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\practice\views\accounting\daily_time_record.php on line 283
+[15-May-2026 15:29:19 Asia/Manila] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\practice\middleware\auth_checker.php on line 2
+[15-May-2026 16:18:35 Asia/Manila] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '\
+			e.employee_id,\
+			e.employee_num_id,\
+			e.user_id,\
+			e.first_nam...' at line 1 in C:\xampp\htdocs\practice\repository\employee_repository.php:52
+Stack trace:
+#0 C:\xampp\htdocs\practice\repository\employee_repository.php(52): PDO->prepare('SELECT \\\r\n\t\t\te....')
+#1 C:\xampp\htdocs\practice\controller\employee_controller.php(19): employee_list_employees(Object(PDO), true)
+#2 C:\xampp\htdocs\practice\views\accounting\employees.php(10): require_once('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\practice\repository\employee_repository.php on line 52
+[16-May-2026 14:30:43 Asia/Manila] PHP Fatal error:  Uncaught Error: Call to undefined function payroll_get_holiday_types_for_date() in C:\xampp\htdocs\practice\controller\payroll_controller.php:619
+Stack trace:
+#0 C:\xampp\htdocs\practice\controller\payroll_controller.php(116): PayrollCalculator->getHolidayClass('2026-05-08')
+#1 C:\xampp\htdocs\practice\controller\payroll_controller.php(58): PayrollCalculator->processAttendanceRecord(Array, 67.5, Array)
+#2 C:\xampp\htdocs\practice\views\accounting\payroll_table.php(220): PayrollCalculator->calculatePayroll(6, '2026-05-01', '2026-05-15')
+#3 {main}
+  thrown in C:\xampp\htdocs\practice\controller\payroll_controller.php on line 619
+[16-May-2026 15:02:18 Asia/Manila] PHP Fatal error:  Uncaught Error: Call to undefined function payroll_get_holiday_types_for_date() in C:\xampp\htdocs\practice\controller\payroll_controller.php:619
+Stack trace:
+#0 C:\xampp\htdocs\practice\controller\payroll_controller.php(116): PayrollCalculator->getHolidayClass('2026-05-08')
+#1 C:\xampp\htdocs\practice\controller\payroll_controller.php(58): PayrollCalculator->processAttendanceRecord(Array, 67.5, Array)
+#2 C:\xampp\htdocs\practice\views\accounting\payroll_table.php(220): PayrollCalculator->calculatePayroll(6, '2026-05-01', '2026-05-15')
+#3 {main}
+  thrown in C:\xampp\htdocs\practice\controller\payroll_controller.php on line 619
+[16-May-2026 15:36:02 Asia/Manila] PHP Fatal error:  Uncaught Error: Call to undefined function payroll_get_holiday_types_for_date() in C:\xampp\htdocs\practice\controller\payroll_controller.php:619
+Stack trace:
+#0 C:\xampp\htdocs\practice\controller\payroll_controller.php(116): PayrollCalculator->getHolidayClass('2026-05-08')
+#1 C:\xampp\htdocs\practice\controller\payroll_controller.php(58): PayrollCalculator->processAttendanceRecord(Array, 67.5, Array)
+#2 C:\xampp\htdocs\practice\views\accounting\payroll_table.php(220): PayrollCalculator->calculatePayroll(6, '2026-05-01', '2026-05-15')
+#3 {main}
+  thrown in C:\xampp\htdocs\practice\controller\payroll_controller.php on line 619

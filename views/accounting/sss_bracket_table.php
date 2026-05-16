@@ -2,90 +2,10 @@
 declare(strict_types=1);
 
 $pageTitle = 'SSS Bracket Table';
+require_once __DIR__ . '/../../middleware/auth_checker.php';
+checkAccess('ACCOUNTING');
 require_once __DIR__ . '/../../template/header.php';
-require_once __DIR__ . '/../../config/db_connection.php';
-
-$effectiveFrom = null;
-try {
-	// Prefer the currently-effective schedule (by date range), else fall back to the most recent effective_from.
-	$stmtEffective = $conn->query(
-		"SELECT effective_from
-		 FROM sss_bracket
-		 WHERE effective_from <= CURDATE()
-		   AND (effective_to IS NULL OR effective_to >= CURDATE())
-		 ORDER BY effective_from DESC
-		 LIMIT 1"
-	);
-	$effectiveFrom = $stmtEffective ? $stmtEffective->fetchColumn() : null;
-
-	if (!$effectiveFrom) {
-		$stmtEffective = $conn->query(
-			"SELECT effective_from
-			 FROM sss_bracket
-			 ORDER BY effective_from DESC
-			 LIMIT 1"
-		);
-		$effectiveFrom = $stmtEffective ? $stmtEffective->fetchColumn() : null;
-	}
-} catch (Throwable $e) {
-	$effectiveFrom = null;
-}
-
-/**
- * Format a compensation limit similar to the screenshot (e.g., 5,249.99 -> 5,250).
- */
-function formatLimit(?string $value): string
-{
-	if ($value === null || $value === '') {
-		return '';
-	}
-
-	$num = (float)$value;
-	$decimal = $num - floor($num);
-	if (abs($decimal - 0.99) < 0.001) {
-		return number_format((float)ceil($num), 0);
-	}
-
-	if (abs($decimal) < 0.001) {
-		return number_format($num, 0);
-	}
-
-	return number_format($num, 2);
-}
-
-function formatRange(?string $lower, ?string $upper): string
-{
-	$lower = ($lower !== null && $lower !== '') ? (string)$lower : null;
-	$upper = ($upper !== null && $upper !== '') ? (string)$upper : null;
-
-	if ($lower === null && $upper !== null) {
-		return 'BELOW ' . formatLimit($upper);
-	}
-	if ($lower !== null && $upper !== null) {
-		return formatLimit($lower) . ' - ' . formatLimit($upper);
-	}
-	if ($lower !== null && $upper === null) {
-		return formatLimit($lower) . ' AND ABOVE';
-	}
-	return '';
-}
-
-$rows = [];
-try {
-	if ($effectiveFrom) {
-		$stmt = $conn->prepare(
-			'SELECT sss_id, lower_limit, upper_limit, msc, regular_msc, mpf_msc,
-					employee_contribution, employer_contribution, effective_from, effective_to
-			 FROM sss_bracket
-			 WHERE effective_from = :effective_from
-			 ORDER BY COALESCE(lower_limit, 0) ASC, COALESCE(upper_limit, 999999999) ASC'
-		);
-		$stmt->execute([':effective_from' => $effectiveFrom]);
-		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-	}
-} catch (Throwable $e) {
-	$rows = [];
-}
+require_once __DIR__ . '/../../controller/sss_bracket_controller.php';
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -156,40 +76,32 @@ try {
 								</tr>
 							</thead>
 							<tbody>
-								<?php if (!$rows): ?>
+								<?php if (!$displayRows): ?>
 									<tr>
 										<td colspan="12" class="text-center text-muted py-4">No bracket rows found<?php echo $effectiveFrom ? (' for ' . htmlspecialchars((string)$effectiveFrom, ENT_QUOTES, 'UTF-8')) : ''; ?>.</td>
 									</tr>
 								<?php else: ?>
-									<?php foreach ($rows as $row): ?>
-										<?php
-											$mscRegular = (float)($row['regular_msc'] ?? 0);
-											$mscMpf = (float)($row['mpf_msc'] ?? 0);
-											$mscTotal = (float)($row['msc'] ?? 0);
-											$employee = (float)($row['employee_contribution'] ?? 0);
-											$employer = (float)($row['employer_contribution'] ?? 0);
-											$total = $employee + $employer;
-										?>
+									<?php foreach ($displayRows as $row): ?>
 										<tr>
-											<td><?php echo htmlspecialchars(formatRange($row['lower_limit'] ?? null, $row['upper_limit'] ?? null), ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars((string)($row['range'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 
 											<!-- Monthly Salary Credit -->
-											<td class="num bg-primary-subtle"><?php echo number_format($mscRegular, 2); ?></td>
-											<td class="num bg-primary-subtle"><?php echo number_format($mscMpf, 2); ?></td>
-											<td class="num bg-primary-subtle"><?php echo number_format($mscTotal, 2); ?></td>
+											<td class="num bg-primary-subtle"><?php echo htmlspecialchars((string)($row['msc_regular'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+											<td class="num bg-primary-subtle"><?php echo htmlspecialchars((string)($row['msc_mpf'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+											<td class="num bg-primary-subtle"><?php echo htmlspecialchars((string)($row['msc_total'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 
 											<!-- Employer -->
-											<td class="num"><?php echo number_format($employer, 2); ?></td>
+											<td class="num"><?php echo htmlspecialchars((string)($row['employer'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 											<td class="text-center">-</td>
 											<td class="text-center">-</td>
-											<td class="num"><?php echo number_format($employer, 2); ?></td>
+											<td class="num"><?php echo htmlspecialchars((string)($row['employer'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 
 											<!-- Employee -->
-											<td class="num"><?php echo number_format($employee, 2); ?></td>
+											<td class="num"><?php echo htmlspecialchars((string)($row['employee'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 											<td class="text-center">-</td>
-											<td class="num"><?php echo number_format($employee, 2); ?></td>
+											<td class="num"><?php echo htmlspecialchars((string)($row['employee'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 
-											<td class="num fw-semibold"><?php echo number_format($total, 2); ?></td>
+											<td class="num fw-semibold"><?php echo htmlspecialchars((string)($row['total'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
 										</tr>
 									<?php endforeach; ?>
 								<?php endif; ?>

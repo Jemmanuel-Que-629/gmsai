@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../middleware/auth_checker.php';
+checkAccess('ACCOUNTING');
+
+require_once __DIR__ . '/../../service/payroll_calculator.php';
+
 $pageTitle = 'Payroll Table';
 require_once __DIR__ . '/../../template/header.php';
 
@@ -127,7 +132,7 @@ if (isset($conn) && ($conn instanceof PDO)) {
                         <div class="col-12 col-md-2 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100">Apply</button>
                             <?php
-                            $bulkUrl = '../../backend/payroll/bulk_print_payslip.php?' . http_build_query([
+                            $bulkUrl = '../../controller/payroll/bulk_print_payslip.php?' . http_build_query([
                                 'start_date' => $startDate,
                                 'end_date' => $endDate,
                                 'location' => $selectedLocation,
@@ -207,7 +212,7 @@ if (isset($conn) && ($conn instanceof PDO)) {
                                 }
 
                                 $stmt->execute();
-                                $calculator = class_exists('PayrollCalculator') ? new PayrollCalculator($conn) : null;
+                                $calculator = new PayrollCalculator($conn);
 
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                     $payroll_data = [];
@@ -219,7 +224,7 @@ if (isset($conn) && ($conn instanceof PDO)) {
                                         );
                                     }
 									
-                                    // Saved cash advance (schema-normalized via payroll + payroll_deductions)
+                                    // Cash advance (prefer payroll_deductions snapshot if payroll exists; otherwise pull from cash_advances per cutoff)
                                     $saved_cash_advance = 0.0;
                                     $payroll_id_sql = "SELECT payroll_id FROM payroll WHERE employee_id = :employee_id AND period_start = :start_date AND period_end = :end_date LIMIT 1";
                                     $payroll_id_stmt = $conn->prepare($payroll_id_sql);
@@ -235,6 +240,27 @@ if (isset($conn) && ($conn instanceof PDO)) {
                                         $cash_advance_stmt->bindParam(':payroll_id', $payroll_id, PDO::PARAM_INT);
                                         $cash_advance_stmt->execute();
                                         $saved_cash_advance = (float)($cash_advance_stmt->fetchColumn() ?: 0);
+                                    } else {
+                                        $periodYear = (int)date('Y', strtotime($startDate));
+                                        $periodMonth = (int)date('n', strtotime($startDate));
+                                        $startDay = (int)date('j', strtotime($startDate));
+                                        $cutoff = $startDay <= 15 ? 1 : 2;
+
+                                        $cash_advance_sql = "SELECT amount FROM cash_advances WHERE employee_id = :employee_id AND period_year = :py AND period_month = :pm AND cutoff = :cutoff LIMIT 1";
+                                        $cash_advance_stmt = $conn->prepare($cash_advance_sql);
+                                        $cash_advance_stmt->execute([
+                                            ':employee_id' => (int)$row['employee_id'],
+                                            ':py' => $periodYear,
+                                            ':pm' => $periodMonth,
+                                            ':cutoff' => $cutoff,
+                                        ]);
+                                        $saved_cash_advance = (float)($cash_advance_stmt->fetchColumn() ?: 0);
+                                        if ($saved_cash_advance < 0) {
+                                            $saved_cash_advance = 0.0;
+                                        }
+                                        if ($saved_cash_advance > 1000) {
+                                            $saved_cash_advance = 1000.0;
+                                        }
                                     }
 
                                     // Fallback: if no calculator, use stored payroll summary if available.

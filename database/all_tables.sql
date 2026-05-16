@@ -253,3 +253,27 @@ VALUES (1000.00, 1500.00, 0.0100, 0.0200, 10000.00, '2026-01-01');
 -- Bracket 2: ₱1,500.01 and above
 INSERT INTO pagibig_contribution (salary_min, salary_max, employee_rate, employer_rate, salary_ceiling, effective_from)
 VALUES (1500.01, 9999999.99, 0.0200, 0.0200, 10000.00, '2026-01-01');
+
+CREATE TABLE employee_work_schedule (
+  schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_id INT NOT NULL,
+  day_of_week TINYINT NOT NULL COMMENT '1=Mon..7=Sun',
+  start_time TIME NULL,
+  end_time TIME NULL,
+  break_minutes INT NOT NULL DEFAULT 0,
+  is_rest_day TINYINT(1) NOT NULL DEFAULT 0,
+  effective_from DATE NOT NULL,
+  effective_to DATE NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  UNIQUE KEY uniq_emp_day_from (employee_id, day_of_week, effective_from),
+  KEY idx_emp_effective (employee_id, effective_from, effective_to),
+
+  CONSTRAINT fk_sched_employee
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+    ON DELETE CASCADE
+);
+
+leave
+cash_advance
